@@ -27,6 +27,18 @@ export default function AppTabs() {
           <TabTrigger name="explore" href="/explore" asChild>
             <TabButton>Explore</TabButton>
           </TabTrigger>
+          <TabTrigger name="edukasi" href="/edukasi" asChild>
+            <TabButton>Edukasi</TabButton>
+          </TabTrigger>
+          <TabTrigger name="monitor" href="/monitor" asChild>
+            <TabButton>Monitor</TabButton>
+          </TabTrigger>
+          <TabTrigger name="lokasi" href="/lokasi" asChild>
+            <TabButton>Lokasi</TabButton>
+          </TabTrigger>
+          <TabTrigger name="profil" href="/profil" asChild>
+            <TabButton>Profil</TabButton>
+          </TabTrigger>
         </CustomTabList>
       </TabList>
     </Tabs>
@@ -77,6 +89,9 @@ export function CustomTabList(props: TabListProps) {
 
 const styles = StyleSheet.create({
   tabListContainer: {
+    // Disembunyikan: navigasi memakai BottomNav milik app; TabTrigger tetap harus
+    // ter-mount agar route-nya terdaftar di expo-router.
+    display: 'none',
     position: 'absolute',
     width: '100%',
     padding: Spacing.three,
