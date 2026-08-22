@@ -3,6 +3,7 @@ import { Bell, ChevronRight, Cpu, HelpCircle, LogOut, UserPen } from 'lucide-rea
 
 import { BottomNav } from '@/components/bottom-nav';
 import { COLOR } from '@/constants/app-colors';
+import { useAuth } from '@/auth';
 
 // ponytail: belum ada desain Figma untuk Profil — layout mengikuti pola layar lain; sesuaikan saat desainnya rilis.
 const MENU = [
@@ -13,6 +14,7 @@ const MENU = [
 ];
 
 export default function ProfilPage() {
+  const { signOut } = useAuth();
   return (
     <SafeAreaView style={styles.safeArea}>
       <StatusBar barStyle="dark-content" backgroundColor={COLOR.bg} />
@@ -51,7 +53,7 @@ export default function ProfilPage() {
               </TouchableOpacity>
             ))}
 
-            <TouchableOpacity style={styles.menuRow} activeOpacity={0.7}>
+            <TouchableOpacity style={styles.menuRow} activeOpacity={0.7} onPress={signOut}>
               <View style={[styles.menuIcon, { backgroundColor: COLOR.redBg }]}>
                 <LogOut color={COLOR.warningIcon} size={22} />
               </View>
