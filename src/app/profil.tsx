@@ -13,8 +13,14 @@ const MENU = [
   { Icon: HelpCircle, label: 'Bantuan', desc: 'FAQ & hubungi kami' },
 ];
 
+function initialsOf(name: string) {
+  const parts = name.trim().split(/\s+/).filter(Boolean);
+  return parts.slice(0, 2).map((p) => p[0]?.toUpperCase()).join('') || '?';
+}
+
 export default function ProfilPage() {
-  const { signOut } = useAuth();
+  const { signOut, user } = useAuth();
+  const name = user?.user_metadata?.full_name || user?.email || 'Pengguna';
   return (
     <SafeAreaView style={styles.safeArea}>
       <StatusBar barStyle="dark-content" backgroundColor={COLOR.bg} />
@@ -31,10 +37,10 @@ export default function ProfilPage() {
 
           <View style={styles.profileCard}>
             <View style={styles.avatar}>
-              <Text style={styles.avatarText}>BS</Text>
+              <Text style={styles.avatarText}>{initialsOf(name)}</Text>
             </View>
             <View>
-              <Text style={styles.name}>Budi Santoso</Text>
+              <Text style={styles.name}>{name}</Text>
               <Text style={styles.role}>Pasien Rawat Jalan</Text>
             </View>
           </View>

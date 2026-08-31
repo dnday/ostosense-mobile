@@ -22,6 +22,7 @@ export default function TabLayout() {
 }
 
 function App() {
-  const { signedIn } = useAuth();
+  const { signedIn, loading } = useAuth();
+  if (loading) return null;
   return signedIn ? <AppTabs /> : <LoginScreen />;
 }
