@@ -1,31 +1,27 @@
-import { Image, Platform, SafeAreaView, Share, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { useRouter } from 'expo-router';
-import { ArrowLeft, Share2 } from 'lucide-react-native';
+import { Image, Modal, Share, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Share2, X } from 'lucide-react-native';
 
 import { COLOR } from '@/constants/app-colors';
 import { DOWNLOAD_APK_URL } from '@/constants/api';
 
 const QR_URL = `https://api.qrserver.com/v1/create-qr-code/?size=240x240&data=${encodeURIComponent(DOWNLOAD_APK_URL)}`;
 
-export default function ShareAppPage() {
-  const router = useRouter();
-
+export function ShareAppModal({ visible, onClose }: { visible: boolean; onClose: () => void }) {
   const shareLink = () => {
     Share.share({ message: `Install OstoSense: ${DOWNLOAD_APK_URL}`, url: DOWNLOAD_APK_URL });
   };
 
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <StatusBar barStyle="dark-content" backgroundColor={COLOR.bg} />
-      <View style={styles.container}>
-        <View style={styles.header}>
-          <TouchableOpacity style={styles.backBtn} onPress={() => router.back()} activeOpacity={0.7}>
-            <ArrowLeft color={COLOR.text} size={20} />
-          </TouchableOpacity>
-          <Text style={styles.title}>Bagikan App</Text>
-        </View>
-
+    <Modal visible={visible} animationType="slide" transparent onRequestClose={onClose}>
+      <View style={styles.backdrop}>
         <View style={styles.card}>
+          <View style={styles.header}>
+            <Text style={styles.title}>Bagikan App</Text>
+            <TouchableOpacity style={styles.closeBtn} onPress={onClose} activeOpacity={0.7}>
+              <X color={COLOR.textLight} size={18} />
+            </TouchableOpacity>
+          </View>
+
           <Image source={{ uri: QR_URL }} style={styles.qr} />
           <Text style={styles.hint}>Scan buat langsung download APK OstoSense</Text>
 
@@ -41,38 +37,33 @@ export default function ShareAppPage() {
           </TouchableOpacity>
         </View>
       </View>
-    </SafeAreaView>
+    </Modal>
   );
 }
 
 const styles = StyleSheet.create({
-  safeArea: { flex: 1, backgroundColor: COLOR.bg },
-  container: {
+  backdrop: {
     flex: 1,
-    paddingHorizontal: 16,
-    paddingTop: Platform.OS === 'android' ? 48 : 16,
+    backgroundColor: 'rgba(0,0,0,0.4)',
+    justifyContent: 'flex-end',
   },
-  header: { flexDirection: 'row', alignItems: 'center', gap: 12, marginBottom: 24 },
-  backBtn: {
-    width: 36,
-    height: 36,
-    borderRadius: 10,
-    backgroundColor: COLOR.white,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  title: { fontFamily: 'Inter', fontSize: 18, fontWeight: '700', color: COLOR.text },
   card: {
     backgroundColor: COLOR.white,
-    borderRadius: 18,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
     padding: 24,
     alignItems: 'center',
     gap: 14,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.08,
-    shadowRadius: 6,
-    elevation: 1,
+  },
+  header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: '100%' },
+  title: { fontFamily: 'Inter', fontSize: 18, fontWeight: '700', color: COLOR.text },
+  closeBtn: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: COLOR.bg,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   qr: { width: 200, height: 200, borderRadius: 12 },
   hint: { fontFamily: 'Inter', fontSize: 12, color: COLOR.textLight, textAlign: 'center' },

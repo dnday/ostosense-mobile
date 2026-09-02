@@ -1,8 +1,9 @@
+import { useState } from 'react';
 import { Platform, SafeAreaView, ScrollView, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { useRouter } from 'expo-router';
 import { Bell, ChevronRight, Cpu, HelpCircle, LogOut, Share2, UserPen } from 'lucide-react-native';
 
 import { BottomNav } from '@/components/bottom-nav';
+import { ShareAppModal } from '@/components/share-app-modal';
 import { COLOR } from '@/constants/app-colors';
 import { useAuth } from '@/auth';
 
@@ -11,7 +12,7 @@ const MENU = [
   { Icon: UserPen, label: 'Edit Profil', desc: 'Ubah data diri' },
   { Icon: Cpu, label: 'Perangkat Sensor', desc: 'OST-SNR-20241215-A7B3' },
   { Icon: Bell, label: 'Notifikasi', desc: 'Atur pengingat & peringatan' },
-  { Icon: Share2, label: 'Bagikan App', desc: 'QR & link download APK', route: '/share-app' },
+  { Icon: Share2, label: 'Bagikan App', desc: 'QR & link download APK', key: 'share' as const },
   { Icon: HelpCircle, label: 'Bantuan', desc: 'FAQ & hubungi kami' },
 ];
 
@@ -21,7 +22,7 @@ function initialsOf(name: string) {
 }
 
 export default function ProfilPage() {
-  const router = useRouter();
+  const [shareVisible, setShareVisible] = useState(false);
   const { signOut, user } = useAuth();
   const name = user?.user_metadata?.full_name || user?.email || 'Pengguna';
   return (
@@ -49,12 +50,12 @@ export default function ProfilPage() {
           </View>
 
           <View style={styles.menuList}>
-            {MENU.map(({ Icon, label, desc, route }) => (
+            {MENU.map(({ Icon, label, desc, key }) => (
               <TouchableOpacity
                 key={label}
                 style={styles.menuRow}
                 activeOpacity={0.7}
-                onPress={route ? () => router.push(route as never) : undefined}
+                onPress={key === 'share' ? () => setShareVisible(true) : undefined}
               >
                 <View style={styles.menuIcon}>
                   <Icon color={COLOR.primary} size={22} />
@@ -79,6 +80,7 @@ export default function ProfilPage() {
         </ScrollView>
 
         <BottomNav active="profil" />
+        <ShareAppModal visible={shareVisible} onClose={() => setShareVisible(false)} />
       </View>
     </SafeAreaView>
   );
