@@ -4,16 +4,22 @@ import { Bell, ChevronRight, Cpu, HelpCircle, LogOut, Share2, UserPen } from 'lu
 
 import { BottomNav } from '@/components/bottom-nav';
 import { ShareAppModal } from '@/components/share-app-modal';
+import { EditProfileModal } from '@/components/edit-profile-modal';
+import { SensorInfoModal } from '@/components/sensor-info-modal';
+import { NotificationsModal } from '@/components/notifications-modal';
+import { HelpModal } from '@/components/help-modal';
 import { COLOR } from '@/constants/app-colors';
 import { useAuth } from '@/auth';
 
+type MenuKey = 'edit' | 'sensor' | 'notif' | 'share' | 'help';
+
 // ponytail: belum ada desain Figma untuk Profil — layout mengikuti pola layar lain; sesuaikan saat desainnya rilis.
-const MENU = [
-  { Icon: UserPen, label: 'Edit Profil', desc: 'Ubah data diri' },
-  { Icon: Cpu, label: 'Perangkat Sensor', desc: 'OST-SNR-20241215-A7B3' },
-  { Icon: Bell, label: 'Notifikasi', desc: 'Atur pengingat & peringatan' },
-  { Icon: Share2, label: 'Bagikan App', desc: 'QR & link download APK', key: 'share' as const },
-  { Icon: HelpCircle, label: 'Bantuan', desc: 'FAQ & hubungi kami' },
+const MENU: { Icon: typeof UserPen; label: string; desc: string; key: MenuKey }[] = [
+  { Icon: UserPen, label: 'Edit Profil', desc: 'Ubah data diri', key: 'edit' },
+  { Icon: Cpu, label: 'Perangkat Sensor', desc: 'ESP32_ASLI_01', key: 'sensor' },
+  { Icon: Bell, label: 'Notifikasi', desc: 'Atur pengingat & peringatan', key: 'notif' },
+  { Icon: Share2, label: 'Bagikan App', desc: 'QR & link download APK', key: 'share' },
+  { Icon: HelpCircle, label: 'Bantuan', desc: 'FAQ & hubungi kami', key: 'help' },
 ];
 
 function initialsOf(name: string) {
@@ -22,7 +28,7 @@ function initialsOf(name: string) {
 }
 
 export default function ProfilPage() {
-  const [shareVisible, setShareVisible] = useState(false);
+  const [openModal, setOpenModal] = useState<MenuKey | null>(null);
   const { signOut, user } = useAuth();
   const name = user?.user_metadata?.full_name || user?.email || 'Pengguna';
   return (
@@ -55,7 +61,7 @@ export default function ProfilPage() {
                 key={label}
                 style={styles.menuRow}
                 activeOpacity={0.7}
-                onPress={key === 'share' ? () => setShareVisible(true) : undefined}
+                onPress={() => setOpenModal(key)}
               >
                 <View style={styles.menuIcon}>
                   <Icon color={COLOR.primary} size={22} />
@@ -80,7 +86,11 @@ export default function ProfilPage() {
         </ScrollView>
 
         <BottomNav active="profil" />
-        <ShareAppModal visible={shareVisible} onClose={() => setShareVisible(false)} />
+        <EditProfileModal visible={openModal === 'edit'} onClose={() => setOpenModal(null)} />
+        <SensorInfoModal visible={openModal === 'sensor'} onClose={() => setOpenModal(null)} />
+        <NotificationsModal visible={openModal === 'notif'} onClose={() => setOpenModal(null)} />
+        <ShareAppModal visible={openModal === 'share'} onClose={() => setOpenModal(null)} />
+        <HelpModal visible={openModal === 'help'} onClose={() => setOpenModal(null)} />
       </View>
     </SafeAreaView>
   );

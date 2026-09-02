@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import {
   StyleSheet,
   Text,
@@ -7,6 +8,7 @@ import {
   SafeAreaView,
   Platform,
   StatusBar,
+  ActivityIndicator,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -27,10 +29,17 @@ import {
 } from 'lucide-react-native';
 
 import { BottomNav } from '@/components/bottom-nav';
+import { NotificationsModal } from '@/components/notifications-modal';
 import { COLOR } from '@/constants/app-colors';
+import { useSensorSeries } from '@/hooks/use-sensor-series';
 
 export default function HomePage() {
   const router = useRouter();
+  const { series, refetch } = useSensorSeries();
+  const [notifVisible, setNotifVisible] = useState(false);
+
+  const isWarning = series.volume.current > 80 || series.risiko.current < 50;
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <StatusBar barStyle="dark-content" backgroundColor="#f5f7fa" />
@@ -43,42 +52,44 @@ export default function HomePage() {
           {/* ─── Header ─── */}
           <View style={styles.header}>
             <View>
-              <Text style={styles.greeting}>Halo, Budi 👋</Text>
-              <Text style={styles.date}>Kamis, 22 Januari 2026</Text>
+              <Text style={styles.greeting}>Halo, Pasien 👋</Text>
+              <Text style={styles.date}>Data Real-time OstoSense</Text>
             </View>
-            <TouchableOpacity style={styles.bellBtn} activeOpacity={0.7}>
+            <TouchableOpacity style={styles.bellBtn} activeOpacity={0.7} onPress={() => setNotifVisible(true)}>
               <Bell color={COLOR.textLight} size={20} />
             </TouchableOpacity>
           </View>
 
-          {/* ─── Warning Banner ─── */}
-          <TouchableOpacity style={styles.warningBanner} activeOpacity={0.8}>
-            <View style={styles.warningIconWrap}>
-              <CalendarClock color={COLOR.warningIcon} size={20} />
-            </View>
-            <View style={styles.warningTextWrap}>
-              <Text style={styles.warningTitle}>Saatnya ganti kantong!</Text>
-              <Text style={styles.warningDesc}>Sudah 84 hari sejak penggantian terakhir</Text>
-            </View>
-            <ChevronRight color={COLOR.warningIcon} size={16} />
-          </TouchableOpacity>
+          {/* ─── Warning Banner (Muncul jika bahaya) ─── */}
+          {isWarning && (
+            <TouchableOpacity style={styles.warningBanner} activeOpacity={0.8} onPress={() => router.push('/monitor')}>
+              <View style={styles.warningIconWrap}>
+                <CalendarClock color={COLOR.warningIcon} size={20} />
+              </View>
+              <View style={styles.warningTextWrap}>
+                <Text style={styles.warningTitle}>Perhatian!</Text>
+                <Text style={styles.warningDesc}>Volume penuh atau risiko kebocoran terdeteksi.</Text>
+              </View>
+              <ChevronRight color={COLOR.warningIcon} size={16} />
+            </TouchableOpacity>
+          )}
 
           {/* ─── Big Circular Status Button ─── */}
           <View style={styles.statusBtnContainer}>
-            <TouchableOpacity style={styles.statusBtnOuter} activeOpacity={0.8}>
+            <TouchableOpacity style={styles.statusBtnOuter} activeOpacity={0.8} onPress={refetch}>
               {/* Green glow ring */}
-              <View style={styles.statusGlow} />
+              <View style={[styles.statusGlow, isWarning && { backgroundColor: COLOR.redBg }]} />
               {/* Gradient ring */}
               <LinearGradient
-                colors={[COLOR.statusGlow, COLOR.shieldAccent]}
+                colors={isWarning ? [COLOR.redBg, COLOR.red] : [COLOR.statusGlow, COLOR.shieldAccent]}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 1 }}
                 style={styles.statusGradientRing}
               />
               {/* White inner circle */}
               <View style={styles.statusInner}>
-                <Shield color={COLOR.shieldAccent} size={40} />
-                <Text style={styles.statusLabel}>Aman</Text>
+                <Shield color={isWarning ? COLOR.red : COLOR.shieldAccent} size={40} />
+                <Text style={[styles.statusLabel, isWarning && { color: COLOR.red }]}>{isWarning ? 'Waspada' : 'Aman'}</Text>
                 <Text style={styles.statusSub}>Tap refresh</Text>
               </View>
             </TouchableOpacity>
@@ -92,19 +103,21 @@ export default function HomePage() {
               </View>
               <View style={styles.sensorInfo}>
                 <Text style={styles.sensorTitle}>Sensor Aktif</Text>
-                <Text style={styles.sensorId}>OST-SNR-20241215-A7B3</Text>
+                <Text style={styles.sensorId}>ESP32_ASLI_01</Text>
               </View>
               <View style={styles.connectedBadge}>
-                <View style={styles.connectedDot} />
-                <Text style={styles.connectedLabel}>Terhubung</Text>
+                <View style={[styles.connectedDot, series.source === 'loading' && { backgroundColor: 'orange' }]} />
+                <Text style={[styles.connectedLabel, series.source === 'loading' && { color: 'orange' }]}>
+                  {series.source === 'loading' ? 'Menghubungkan...' : 'Terhubung'}
+                </Text>
               </View>
             </View>
             <View style={styles.sensorActions}>
-              <TouchableOpacity style={styles.sensorBtnDark} activeOpacity={0.8}>
+              <TouchableOpacity style={styles.sensorBtnDark} activeOpacity={0.8} onPress={refetch}>
                 <RefreshCw color="#fff" size={12} />
-                <Text style={styles.sensorBtnDarkText}>Ganti</Text>
+                <Text style={styles.sensorBtnDarkText}>Refresh Data</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={styles.sensorBtnLight} activeOpacity={0.7}>
+              <TouchableOpacity style={styles.sensorBtnLight} activeOpacity={0.7} onPress={() => router.push('/monitor')}>
                 <History color="#1a1a1a" size={12} />
                 <Text style={styles.sensorBtnLightText}>Riwayat</Text>
               </TouchableOpacity>
@@ -118,9 +131,9 @@ export default function HomePage() {
                 <Package color="#155dfc" size={20} />
               </View>
               <Text style={styles.metricLabel}>Volume</Text>
-              <Text style={styles.metricValue}>45%</Text>
+              <Text style={styles.metricValue}>{series.volume.current}%</Text>
               <View style={styles.metricBarTrack}>
-                <View style={[styles.metricBarFill, { width: '45%' }]} />
+                <View style={[styles.metricBarFill, { width: `${series.volume.current}%` }]} />
               </View>
             </View>
 
@@ -129,7 +142,7 @@ export default function HomePage() {
                 <ShieldCheck color="#007a55" size={20} />
               </View>
               <Text style={styles.metricLabel}>Kebocoran</Text>
-              <Text style={[styles.metricValue, { color: '#007a55' }]}>Rendah</Text>
+              <Text style={[styles.metricValue, { color: '#007a55' }]}>{series.risiko.current}%</Text>
               <View style={styles.metricStatusDot} />
             </View>
 
@@ -138,24 +151,10 @@ export default function HomePage() {
                 <Droplets color="#0092b8" size={20} />
               </View>
               <Text style={styles.metricLabel}>Kulit</Text>
-              <Text style={[styles.metricValue, { color: '#0092b8' }]}>Baik</Text>
+              <Text style={[styles.metricValue, { color: '#0092b8' }]}>{series.kelembaban.data[series.kelembaban.data.length - 1] ?? 0}%</Text>
               <View style={[styles.metricStatusDot, { backgroundColor: '#0092b8' }]} />
             </View>
           </View>
-
-          {/* ─── Baru Ganti Kantong (Dark CTA) ─── */}
-          <TouchableOpacity style={styles.ctaCard} activeOpacity={0.8}>
-            <View style={styles.ctaLeft}>
-              <View style={styles.ctaIconWrap}>
-                <RefreshCw color="#fff" size={24} />
-              </View>
-              <View>
-                <Text style={styles.ctaTitle}>Baru Ganti Kantong</Text>
-                <Text style={styles.ctaDesc}>Catat waktu penggantian</Text>
-              </View>
-            </View>
-            <ChevronRight color="#fff" size={20} />
-          </TouchableOpacity>
 
           {/* ─── Info List Cards ─── */}
           <View style={styles.infoList}>
@@ -204,6 +203,7 @@ export default function HomePage() {
         </ScrollView>
 
         <BottomNav active="beranda" />
+        <NotificationsModal visible={notifVisible} onClose={() => setNotifVisible(false)} />
       </View>
     </SafeAreaView>
   );
@@ -620,3 +620,4 @@ const styles = StyleSheet.create({
     lineHeight: 16,
   },
 });
+
