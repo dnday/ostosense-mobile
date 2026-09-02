@@ -25,6 +25,7 @@ const AuthContext = createContext<Auth | null>(null);
 
 const WRONG_ROLE_MESSAGE =
   'Akun ini terdaftar sebagai akun nakes di dashboard web OstoSense, bukan akun pasien. Gunakan akun pasien untuk masuk di sini.';
+const ROLE_CHECK_FAILED_MESSAGE = 'Gagal memverifikasi akun, coba lagi. Jika masih gagal, hubungi admin.';
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
@@ -40,7 +41,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const result = await ensureRole(next.user.id, 'pasien');
       if (!result.ok) {
         await supabase.auth.signOut();
-        setRoleError(WRONG_ROLE_MESSAGE);
+        setRoleError(result.actualRole ? WRONG_ROLE_MESSAGE : ROLE_CHECK_FAILED_MESSAGE);
         setSession(null);
         return;
       }
