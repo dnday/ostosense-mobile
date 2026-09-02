@@ -1,7 +1,11 @@
 import { createContext, useContext, useEffect, useState } from 'react';
+import * as Linking from 'expo-linking';
+import * as WebBrowser from 'expo-web-browser';
 import type { Session, User } from '@supabase/supabase-js';
 
 import { supabase } from '@/lib/supabase';
+
+WebBrowser.maybeCompleteAuthSession();
 
 type AuthResult = { error?: string };
 
@@ -11,6 +15,7 @@ type Auth = {
   user: User | null;
   signIn: (email: string, password: string) => Promise<AuthResult>;
   signUp: (name: string, email: string, password: string) => Promise<AuthResult>;
+  signInWithGoogle: () => Promise<AuthResult>;
   signOut: () => Promise<void>;
 };
 
@@ -41,12 +46,34 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return {};
   };
 
+  const signInWithGoogle = async (): Promise<AuthResult> => {
+    const redirectTo = Linking.createURL('/');
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: { redirectTo, skipBrowserRedirect: true },
+    });
+    if (error) return { error: error.message };
+
+    const result = await WebBrowser.openAuthSessionAsync(data.url, redirectTo);
+    if (result.type !== 'success') return {};
+
+    const params = new URLSearchParams(new URL(result.url).hash.replace('#', ''));
+    const access_token = params.get('access_token');
+    const refresh_token = params.get('refresh_token');
+    if (!access_token || !refresh_token) return { error: 'Login Google gagal, coba lagi.' };
+
+    const { error: sessionError } = await supabase.auth.setSession({ access_token, refresh_token });
+    return sessionError ? { error: sessionError.message } : {};
+  };
+
   const signOut = async () => {
     await supabase.auth.signOut();
   };
 
   return (
-    <AuthContext value={{ signedIn: !!session, loading, user: session?.user ?? null, signIn, signUp, signOut }}>
+    <AuthContext
+      value={{ signedIn: !!session, loading, user: session?.user ?? null, signIn, signUp, signInWithGoogle, signOut }}
+    >
       {children}
     </AuthContext>
   );
