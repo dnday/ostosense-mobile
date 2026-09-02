@@ -4,6 +4,7 @@ import * as WebBrowser from 'expo-web-browser';
 import type { Session, User } from '@supabase/supabase-js';
 
 import { supabase } from '@/lib/supabase';
+import { ensureRole } from '@/lib/profile';
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -13,6 +14,7 @@ type Auth = {
   signedIn: boolean;
   loading: boolean;
   user: User | null;
+  roleError: string;
   signIn: (email: string, password: string) => Promise<AuthResult>;
   signUp: (name: string, email: string, password: string) => Promise<AuthResult>;
   signInWithGoogle: () => Promise<AuthResult>;
@@ -21,16 +23,37 @@ type Auth = {
 
 const AuthContext = createContext<Auth | null>(null);
 
+const WRONG_ROLE_MESSAGE =
+  'Akun ini terdaftar sebagai akun nakes di dashboard web OstoSense, bukan akun pasien. Gunakan akun pasien untuk masuk di sini.';
+
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
+  const [roleError, setRoleError] = useState('');
 
   useEffect(() => {
+    const applySession = async (next: Session | null) => {
+      if (!next) {
+        setSession(null);
+        return;
+      }
+      const result = await ensureRole(next.user.id, 'pasien');
+      if (!result.ok) {
+        await supabase.auth.signOut();
+        setRoleError(WRONG_ROLE_MESSAGE);
+        setSession(null);
+        return;
+      }
+      setRoleError('');
+      setSession(next);
+    };
+
     supabase.auth.getSession().then(({ data }) => {
-      setSession(data.session);
-      setLoading(false);
+      applySession(data.session).finally(() => setLoading(false));
     });
-    const { data: subscription } = supabase.auth.onAuthStateChange((_event, next) => setSession(next));
+    const { data: subscription } = supabase.auth.onAuthStateChange((_event, next) => {
+      applySession(next);
+    });
     return () => subscription.subscription.unsubscribe();
   }, []);
 
@@ -72,7 +95,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   return (
     <AuthContext
-      value={{ signedIn: !!session, loading, user: session?.user ?? null, signIn, signUp, signInWithGoogle, signOut }}
+      value={{
+        signedIn: !!session,
+        loading,
+        user: session?.user ?? null,
+        roleError,
+        signIn,
+        signUp,
+        signInWithGoogle,
+        signOut,
+      }}
     >
       {children}
     </AuthContext>
