@@ -32,13 +32,20 @@ import { BottomNav } from '@/components/bottom-nav';
 import { NotificationsModal } from '@/components/notifications-modal';
 import { COLOR } from '@/constants/app-colors';
 import { useSensorSeries } from '@/hooks/use-sensor-series';
+import { useAiPrediction } from '@/hooks/use-ai-prediction';
 
 export default function HomePage() {
   const router = useRouter();
   const { series, refetch } = useSensorSeries();
+  const aiPrediction = useAiPrediction();
   const [notifVisible, setNotifVisible] = useState(false);
 
-  const isWarning = series.volume.current > 80 || series.risiko.current < 50;
+  // AI eksperimental cuma dipakai buat eskalasi visual di sini, bukan notifikasi
+  // (lihat OSTOSENSE-AI/docs/ai-software-integration-contract-v0.2.md).
+  const aiUrgent =
+    (aiPrediction.state === 'ready' || aiPrediction.state === 'stale') &&
+    (aiPrediction.riskClass === 'Caution' || aiPrediction.riskClass === 'Urgent');
+  const isWarning = series.volume.current > 80 || aiUrgent;
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -141,8 +148,10 @@ export default function HomePage() {
               <View style={[styles.metricIconWrap, { backgroundColor: '#d0fae5' }]}>
                 <ShieldCheck color="#007a55" size={20} />
               </View>
-              <Text style={styles.metricLabel}>Kebocoran</Text>
-              <Text style={[styles.metricValue, { color: '#007a55' }]}>{series.risiko.current}%</Text>
+              <Text style={styles.metricLabel}>Klasifikasi AI</Text>
+              <Text style={[styles.metricValueSmall, { color: '#007a55' }]} numberOfLines={1}>
+                {aiPrediction.state === 'unavailable' ? 'Belum tersedia' : aiPrediction.riskClass}
+              </Text>
               <View style={styles.metricStatusDot} />
             </View>
 
@@ -508,6 +517,13 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: '#101828',
     lineHeight: 22,
+  },
+  metricValueSmall: {
+    fontFamily: 'Inter',
+    fontSize: 13,
+    fontWeight: '700',
+    color: '#101828',
+    lineHeight: 18,
   },
   metricBarTrack: {
     width: '100%',

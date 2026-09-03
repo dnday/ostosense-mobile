@@ -28,10 +28,6 @@ export function SensorInfoModal({ visible, onClose }: { visible: boolean; onClos
           <Text style={styles.label}>Volume Kantong</Text>
           <Text style={styles.value}>{series.volume.current}%</Text>
         </View>
-        <View style={styles.row}>
-          <Text style={styles.label}>Integritas Kulit</Text>
-          <Text style={styles.value}>{series.risiko.current}%</Text>
-        </View>
       </View>
     </SheetModal>
   );

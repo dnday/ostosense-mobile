@@ -21,9 +21,14 @@ const DEFAULT_CALIBRATION: Calibration = {
 
 const clamp = (v: number) => Math.max(0, Math.min(100, Math.round(v)));
 
+export type SensorQuality = { cap: string | null; lig: string | null; system: string | null };
+
 export type SensorSeries = {
   source: 'supabase' | 'fallback' | 'loading';
-  risiko: { labels: string[]; data: number[]; current: number; status: string };
+  // Kapan fetch sensor_logs terakhir SUKSES — dipakai buat deteksi device offline/data usang
+  // (lihat AiStatusCard). null berarti belum pernah berhasil sejak app dibuka.
+  lastUpdatedAt: number | null;
+  quality: SensorQuality;
   volume: { labels: string[]; data: number[]; current: number; status: string };
   kelembaban: { labels: string[]; data: number[]; threshold: number };
   history: { time: string; desc: string; status: 'Normal' | 'Tinggi' }[];
@@ -31,12 +36,8 @@ export type SensorSeries = {
 
 const FALLBACK: SensorSeries = {
   source: 'loading',
-  risiko: {
-    labels: ['0h', '6h', '12h', '18h', '24h', '30h', '36h', '42h'],
-    data: [100, 96, 89, 82, 75, 69, 62, 55],
-    current: 100,
-    status: 'Memuat data...',
-  },
+  lastUpdatedAt: null,
+  quality: { cap: null, lig: null, system: null },
   volume: {
     labels: ['08:00', '10:00', '12:00', '14:00', '16:00', '18:00'],
     data: [0, 0, 0, 0, 0, 0],
@@ -59,7 +60,7 @@ export function useSensorSeries() {
     try {
       const { data, error } = await supabase
         .from('sensor_logs')
-        .select('timestamp, capacitance_raw, lig_raw')
+        .select('timestamp, capacitance_raw, lig_raw, cap_quality, lig_quality, system_quality')
         .order('timestamp', { ascending: false })
         .limit(120);
 
@@ -82,12 +83,7 @@ export function useSensorSeries() {
       const pts = pick(6);
 
       const last = logs[logs.length - 1];
-      const currentInteg = integPct(last.lig_raw);
       const currentVol = volPct(last.capacitance_raw);
-
-      const firstInteg = integPct(logs[0].lig_raw);
-      const slope = logs.length > 1 ? (currentInteg - firstInteg) / 7 : -6;
-      const projData = Array.from({ length: 8 }, (_, i) => clamp(currentInteg + slope * i));
 
       const historyData = pts.slice().reverse().map((p, i) => {
           const kind = i % 3;
@@ -102,12 +98,8 @@ export function useSensorSeries() {
 
       setSeries({
         source: 'supabase',
-        risiko: {
-          labels: ['0h', '6h', '12h', '18h', '24h', '30h', '36h', '42h'],
-          data: projData,
-          current: currentInteg,
-          status: currentInteg >= 80 ? 'Risiko rendah' : currentInteg >= 50 ? 'Risiko sedang' : 'Risiko tinggi',
-        },
+        lastUpdatedAt: Date.now(),
+        quality: { cap: last.cap_quality ?? null, lig: last.lig_quality ?? null, system: last.system_quality ?? null },
         volume: {
           labels: pts.map((p) => hhmm(p.timestamp)),
           data: pts.map((p) => volPct(p.capacitance_raw)),

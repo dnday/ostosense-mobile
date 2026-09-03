@@ -1,70 +1,13 @@
-import { useEffect, useState } from 'react';
+import { useSensorSeries } from "@/hooks/use-sensor-series";
 import { Platform, SafeAreaView, ScrollView, StatusBar, StyleSheet, Text, View } from 'react-native';
-import { Droplets, History, Package, TrendingDown } from 'lucide-react-native';
+import { Droplets, History, Package } from 'lucide-react-native';
 
+import { AiStatusCard } from '@/components/ai-status-card';
 import { BottomNav } from '@/components/bottom-nav';
 import { BarChart, LineChart } from '@/components/charts';
-import { API_URL } from '@/constants/api';
 import { COLOR } from '@/constants/app-colors';
 
-type SensorSeries = {
-  risiko: { labels: string[]; data: number[]; current: number; status: string };
-  volume: { labels: string[]; data: number[]; current: number; status: string };
-  kelembaban: { labels: string[]; data: number[]; threshold: number };
-  history: { time: string; desc: string; status: 'Normal' | 'Tinggi' }[];
-};
 
-// Angka mockup Figma — tampil saat backend belum hidup.
-const FALLBACK: SensorSeries = {
-  risiko: {
-    labels: ['0h', '6h', '12h', '18h', '24h', '30h', '36h', '42h'],
-    data: [100, 96, 89, 82, 75, 69, 62, 55],
-    current: 62,
-    status: 'Risiko rendah',
-  },
-  volume: {
-    labels: ['08:00', '10:00', '12:00', '14:00', '16:00', '18:00'],
-    data: [15, 25, 34, 42, 48, 45],
-    current: 45,
-    status: 'Kapasitas aman',
-  },
-  kelembaban: {
-    labels: ['08:00', '10:00', '12:00', '14:00', '16:00', '18:00'],
-    data: [34, 42, 64, 38, 44, 72],
-    threshold: 60,
-  },
-  history: [
-    { time: '18:30', desc: 'Kelembaban: 45%', status: 'Normal' },
-    { time: '18:15', desc: 'Volume: 45%', status: 'Normal' },
-    { time: '17:45', desc: 'Integritas: 62%', status: 'Normal' },
-    { time: '17:00', desc: 'Kelembaban: 72%', status: 'Tinggi' },
-    { time: '15:30', desc: 'Volume: 48%', status: 'Normal' },
-    { time: '14:00', desc: 'Kelembaban: 38%', status: 'Normal' },
-  ],
-};
-
-const POLL_MS = 5000;
-
-function useSensorSeries() {
-  const [series, setSeries] = useState<SensorSeries>(FALLBACK);
-  useEffect(() => {
-    let alive = true;
-    const load = () =>
-      fetch(`${API_URL}/api/sensor-series`)
-        .then((r) => r.json())
-        .then((d: SensorSeries) => {
-          if (alive && d?.risiko) setSeries(d);
-        })
-        .catch(() => {}); // backend mati → tetap pakai data terakhir/fallback
-    load();
-    const id = setInterval(load, POLL_MS);
-    return () => {
-      alive = false;
-      clearInterval(id);
-    };
-  }, []);
-  return series;
-}
 
 function CardHeader({
   Icon,
@@ -93,7 +36,7 @@ function CardHeader({
 }
 
 export default function MonitorPage() {
-  const { risiko, volume, kelembaban, history } = useSensorSeries();
+  const { series: { volume, kelembaban, history, quality, lastUpdatedAt } } = useSensorSeries();
   return (
     <SafeAreaView style={styles.safeArea}>
       <StatusBar barStyle="dark-content" backgroundColor={COLOR.bg} />
@@ -109,23 +52,8 @@ export default function MonitorPage() {
             <Text style={styles.subtitle}>Pantau kondisi secara real-time</Text>
           </View>
 
-          {/* ─── Risiko Kebocoran ─── */}
-          <View style={styles.card}>
-            <CardHeader
-              Icon={TrendingDown}
-              iconBg="#dbeafe"
-              iconColor="#155dfc"
-              title="Risiko Kebocoran"
-              subtitle="Prediksi AI berdasarkan integritas"
-            />
-            <LineChart labels={risiko.labels} data={risiko.data} color="#2b7fff" />
-            <View style={[styles.statusBox, { backgroundColor: COLOR.blueLight, borderColor: '#dbeafe' }]}>
-              <Text style={styles.statusText}>
-                <Text style={[styles.statusLabel, { color: '#1447e6' }]}>Status:</Text> Integritas{' '}
-                <Text style={styles.statusBold}>{risiko.current}%</Text> - {risiko.status}
-              </Text>
-            </View>
-          </View>
+          {/* ─── Klasifikasi AI (eksperimental, lihat AiStatusCard) ─── */}
+          <AiStatusCard quality={quality} lastUpdatedAt={lastUpdatedAt} />
 
           {/* ─── Volume Kantong ─── */}
           <View style={styles.card}>
