@@ -1,14 +1,37 @@
 import { useEffect, useState } from 'react';
 import { StyleSheet, Switch, Text, View } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as Notifications from 'expo-notifications';
 
 import { COLOR } from '@/constants/app-colors';
+import { DEVICE_SESSION_ID } from '@/constants/device';
 import { SheetModal } from '@/components/sheet-modal';
+import { supabase } from '@/lib/supabase';
 
 const STORAGE_KEY = 'notif-prefs';
+const REMINDER_HOUR = 9; // ponytail: jam pengingat harian hardcode, belum ada UI buat atur jam sendiri.
 
 type Prefs = { gantiKantong: boolean; risikoTinggi: boolean };
 const DEFAULT_PREFS: Prefs = { gantiKantong: true, risikoTinggi: true };
+
+const REMINDER_ID_KEY = 'notif-reminder-id';
+
+async function scheduleReminder() {
+  const id = await Notifications.scheduleNotificationAsync({
+    content: {
+      title: 'Cek kondisi kantong',
+      body: 'Waktunya periksa kantong dan pertimbangkan waktu penggantian.',
+    },
+    trigger: { type: Notifications.SchedulableTriggerInputTypes.DAILY, hour: REMINDER_HOUR, minute: 0 },
+  });
+  await AsyncStorage.setItem(REMINDER_ID_KEY, id);
+}
+
+async function cancelReminder() {
+  const id = await AsyncStorage.getItem(REMINDER_ID_KEY);
+  if (id) await Notifications.cancelScheduledNotificationAsync(id);
+  await AsyncStorage.removeItem(REMINDER_ID_KEY);
+}
 
 export function NotificationsModal({ visible, onClose }: { visible: boolean; onClose: () => void }) {
   const [prefs, setPrefs] = useState<Prefs>(DEFAULT_PREFS);
@@ -20,10 +43,24 @@ export function NotificationsModal({ visible, onClose }: { visible: boolean; onC
     });
   }, [visible]);
 
-  const toggle = (key: keyof Prefs) => {
+  const toggle = async (key: keyof Prefs) => {
     const next = { ...prefs, [key]: !prefs[key] };
     setPrefs(next);
-    AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+    await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+
+    if (key === 'gantiKantong') {
+      if (next.gantiKantong) await scheduleReminder();
+      else await cancelReminder();
+    }
+
+    if (key === 'risikoTinggi') {
+      // Kontrol server-side: matiin/nyalain notifikasi push yang dikirim backend
+      // saat sensor deteksi kantong penuh / kontak cairan LIG langsung (bukan kelas AI).
+      await supabase
+        .from('push_tokens')
+        .update({ alerts_enabled: next.risikoTinggi })
+        .eq('session_id', DEVICE_SESSION_ID);
+    }
   };
 
   return (
@@ -31,8 +68,8 @@ export function NotificationsModal({ visible, onClose }: { visible: boolean; onC
       <View style={styles.content}>
         <View style={styles.row}>
           <View style={styles.rowText}>
-            <Text style={styles.label}>Pengingat ganti kantong</Text>
-            <Text style={styles.desc}>Diingatkan saat volume kantong hampir penuh</Text>
+            <Text style={styles.label}>Pengingat harian</Text>
+            <Text style={styles.desc}>Diingatkan tiap jam {REMINDER_HOUR}:00 buat cek/ganti kantong</Text>
           </View>
           <Switch
             value={prefs.gantiKantong}
@@ -42,8 +79,8 @@ export function NotificationsModal({ visible, onClose }: { visible: boolean; onC
         </View>
         <View style={styles.row}>
           <View style={styles.rowText}>
-            <Text style={styles.label}>Peringatan risiko tinggi</Text>
-            <Text style={styles.desc}>Diingatkan saat risiko kebocoran meningkat</Text>
+            <Text style={styles.label}>Peringatan sensor</Text>
+            <Text style={styles.desc}>Notifikasi saat kantong penuh atau LIG deteksi kontak cairan langsung</Text>
           </View>
           <Switch
             value={prefs.risikoTinggi}
