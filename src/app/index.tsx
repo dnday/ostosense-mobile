@@ -160,7 +160,7 @@ export default function HomePage() {
                 <Droplets color="#0092b8" size={20} />
               </View>
               <Text style={styles.metricLabel}>Kulit</Text>
-              <Text style={[styles.metricValue, { color: '#0092b8' }]}>{series.kelembaban.data[series.kelembaban.data.length - 1] ?? 0}%</Text>
+              <Text style={[styles.metricValue, { color: '#0092b8' }]}>{series.kulit.current}%</Text>
               <View style={[styles.metricStatusDot, { backgroundColor: '#0092b8' }]} />
             </View>
           </View>

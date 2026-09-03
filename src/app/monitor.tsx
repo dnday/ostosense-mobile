@@ -4,7 +4,7 @@ import { Droplets, History, Package } from 'lucide-react-native';
 
 import { AiStatusCard } from '@/components/ai-status-card';
 import { BottomNav } from '@/components/bottom-nav';
-import { BarChart, LineChart } from '@/components/charts';
+import { LineChart } from '@/components/charts';
 import { COLOR } from '@/constants/app-colors';
 
 
@@ -36,7 +36,7 @@ function CardHeader({
 }
 
 export default function MonitorPage() {
-  const { series: { volume, kelembaban, history, quality, lastUpdatedAt } } = useSensorSeries();
+  const { series: { volume, kulit, history, quality, lastUpdatedAt } } = useSensorSeries();
   return (
     <SafeAreaView style={styles.safeArea}>
       <StatusBar barStyle="dark-content" backgroundColor={COLOR.bg} />
@@ -73,29 +73,21 @@ export default function MonitorPage() {
             </View>
           </View>
 
-          {/* ─── Kelembaban Kulit ─── */}
+          {/* ─── Integritas Kulit (baseplate, dari sensor LIG) ─── */}
           <View style={styles.card}>
             <CardHeader
               Icon={Droplets}
-              iconBg="#cefafe"
-              iconColor="#0092b8"
-              title="Kelembaban Kulit"
-              subtitle="Monitor tingkat kelembaban"
+              iconBg="#f3e8ff"
+              iconColor="#9333ea"
+              title="Integritas Kulit"
+              subtitle="Degradasi hidrokoloid dari sensor LIG"
             />
-            <BarChart
-              labels={kelembaban.labels}
-              data={kelembaban.data}
-              threshold={kelembaban.threshold}
-            />
-            <View style={styles.legendRow}>
-              <View style={styles.legendItem}>
-                <View style={[styles.legendSwatch, { backgroundColor: '#0092b8' }]} />
-                <Text style={styles.legendText}>Normal</Text>
-              </View>
-              <View style={styles.legendItem}>
-                <View style={[styles.legendSwatch, { backgroundColor: '#ff9141' }]} />
-                <Text style={styles.legendText}>Tinggi</Text>
-              </View>
+            <LineChart labels={kulit.labels} data={kulit.data} color="#a23bf0" />
+            <View style={[styles.statusBox, { backgroundColor: '#f3e8ff', borderColor: '#e9d5ff' }]}>
+              <Text style={styles.statusText}>
+                <Text style={[styles.statusLabel, { color: '#9333ea' }]}>Status:</Text> Integritas{' '}
+                <Text style={styles.statusBold}>{kulit.current}%</Text> - {kulit.status}
+              </Text>
             </View>
           </View>
 

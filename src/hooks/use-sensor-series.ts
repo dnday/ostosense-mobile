@@ -19,6 +19,10 @@ const DEFAULT_CALIBRATION: Calibration = {
   humid_high: 60,
 };
 
+// ponytail: belum ada kolom kalibrasi khusus buat ambang integritas kulit di
+// sensor_calibration — hardcode di sini sampai ada kebutuhan diedit dari Settings.
+const SKIN_INTEGRITY_WARNING_BELOW = 50;
+
 const clamp = (v: number) => Math.max(0, Math.min(100, Math.round(v)));
 
 export type SensorQuality = { cap: string | null; lig: string | null; system: string | null };
@@ -30,7 +34,11 @@ export type SensorSeries = {
   lastUpdatedAt: number | null;
   quality: SensorQuality;
   volume: { labels: string[]; data: number[]; current: number; status: string };
-  kelembaban: { labels: string[]; data: number[]; threshold: number };
+  // Integritas hidrokoloid/baseplate dari sensor LIG (resistif) — BUKAN dari sensor
+  // kapasitif kantong. Tidak ada sensor kelembaban kulit terpisah di hardware ini,
+  // jadi field "kelembaban" lama (yang sebenarnya dihitung dari kapasitansi kantong)
+  // dihapus daripada dipalsukan seolah data kulit.
+  kulit: { labels: string[]; data: number[]; current: number; status: string };
   history: { time: string; desc: string; status: 'Normal' | 'Tinggi' }[];
 };
 
@@ -44,10 +52,11 @@ const FALLBACK: SensorSeries = {
     current: 0,
     status: 'Memuat data...',
   },
-  kelembaban: {
+  kulit: {
     labels: ['08:00', '10:00', '12:00', '14:00', '16:00', '18:00'],
     data: [0, 0, 0, 0, 0, 0],
-    threshold: DEFAULT_CALIBRATION.humid_high,
+    current: 0,
+    status: 'Memuat data...',
   },
   history: [],
 };
@@ -67,11 +76,10 @@ export function useSensorSeries() {
       if (error || !data || data.length === 0) return;
 
       const logs = data.reverse();
-      const { cap_empty, cap_full, lig_base, lig_dead, humid_high } = calibrationRef.current;
+      const { cap_empty, cap_full, lig_base, lig_dead } = calibrationRef.current;
 
       const volPct = (cap: number) => clamp(((cap - cap_empty) / (cap_full - cap_empty)) * 100);
       const integPct = (lig: number) => clamp(((lig - lig_dead) / (lig_base - lig_dead)) * 100);
-      const humidPct = (cap: number) => clamp(30 + (cap - cap_empty) / 8);
 
       const hhmm = (iso: string) => {
         const d = new Date(iso);
@@ -84,15 +92,17 @@ export function useSensorSeries() {
 
       const last = logs[logs.length - 1];
       const currentVol = volPct(last.capacitance_raw);
+      const currentInteg = integPct(last.lig_raw);
 
       const historyData = pts.slice().reverse().map((p, i) => {
-          const kind = i % 3;
-          const val = kind === 0 ? humidPct(p.capacitance_raw) : kind === 1 ? volPct(p.capacitance_raw) : integPct(p.lig_raw);
-          const label = kind === 0 ? 'Kelembaban' : kind === 1 ? 'Volume' : 'Integritas';
+          const kind = i % 2;
+          const val = kind === 0 ? volPct(p.capacitance_raw) : integPct(p.lig_raw);
+          const label = kind === 0 ? 'Volume' : 'Integritas Kulit';
+          const flagged = kind === 0 ? val > 80 : val < SKIN_INTEGRITY_WARNING_BELOW;
           return {
             time: hhmm(p.timestamp),
             desc: `${label}: ${val}%`,
-            status: (kind === 0 && val > humid_high ? 'Tinggi' : 'Normal') as 'Normal' | 'Tinggi',
+            status: (flagged ? 'Tinggi' : 'Normal') as 'Normal' | 'Tinggi',
           };
         });
 
@@ -106,10 +116,11 @@ export function useSensorSeries() {
           current: currentVol,
           status: currentVol < 80 ? 'Kapasitas aman' : 'Segera ganti kantong',
         },
-        kelembaban: {
+        kulit: {
           labels: pts.map((p) => hhmm(p.timestamp)),
-          data: pts.map((p) => humidPct(p.capacitance_raw)),
-          threshold: humid_high,
+          data: pts.map((p) => integPct(p.lig_raw)),
+          current: currentInteg,
+          status: currentInteg >= SKIN_INTEGRITY_WARNING_BELOW ? 'Integritas baik' : 'Perlu diperiksa',
         },
         history: historyData,
       });
