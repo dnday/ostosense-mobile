@@ -27,12 +27,19 @@ const clamp = (v: number) => Math.max(0, Math.min(100, Math.round(v)));
 
 export type SensorQuality = { cap: string | null; lig: string | null; system: string | null };
 
+// Kap_4/Kap_5/Res_16 — channel yang direkam hardware tapi belum ada makna/kalibrasi
+// produk sendiri (Kap_7 dikunci sebagai kanal kapasitif utama, Res_15+Res_16
+// dirata-rata jadi satu "kulit"). Ditampilkan mentah sebagai diagnostik, bukan
+// metrik dengan threshold seperti volume/kulit.
+export type SensorDiagnostics = { res16: number | null; kap4: number | null; kap5: number | null };
+
 export type SensorSeries = {
   source: 'supabase' | 'fallback' | 'loading';
   // Kapan fetch sensor_logs terakhir SUKSES — dipakai buat deteksi device offline/data usang
   // (lihat AiStatusCard). null berarti belum pernah berhasil sejak app dibuka.
   lastUpdatedAt: number | null;
   quality: SensorQuality;
+  diagnostics: SensorDiagnostics;
   volume: { labels: string[]; data: number[]; current: number; status: string };
   // Integritas hidrokoloid/baseplate dari sensor LIG (resistif) — BUKAN dari sensor
   // kapasitif kantong. Tidak ada sensor kelembaban kulit terpisah di hardware ini,
@@ -46,6 +53,7 @@ const FALLBACK: SensorSeries = {
   source: 'loading',
   lastUpdatedAt: null,
   quality: { cap: null, lig: null, system: null },
+  diagnostics: { res16: null, kap4: null, kap5: null },
   volume: {
     labels: ['08:00', '10:00', '12:00', '14:00', '16:00', '18:00'],
     data: [0, 0, 0, 0, 0, 0],
@@ -69,7 +77,7 @@ export function useSensorSeries() {
     try {
       const { data, error } = await supabase
         .from('sensor_logs')
-        .select('timestamp, capacitance_raw, lig_raw, cap_quality, lig_quality, system_quality')
+        .select('timestamp, capacitance_raw, lig_raw, cap_quality, lig_quality, system_quality, res_16_raw, kap_4_raw, kap_5_raw')
         .order('timestamp', { ascending: false })
         .limit(120);
 
@@ -110,6 +118,11 @@ export function useSensorSeries() {
         source: 'supabase',
         lastUpdatedAt: Date.now(),
         quality: { cap: last.cap_quality ?? null, lig: last.lig_quality ?? null, system: last.system_quality ?? null },
+        diagnostics: {
+          res16: last.res_16_raw ?? null,
+          kap4: last.kap_4_raw ?? null,
+          kap5: last.kap_5_raw ?? null,
+        },
         volume: {
           labels: pts.map((p) => hhmm(p.timestamp)),
           data: pts.map((p) => volPct(p.capacitance_raw)),

@@ -28,6 +28,20 @@ export function SensorInfoModal({ visible, onClose }: { visible: boolean; onClos
           <Text style={styles.label}>Volume Kantong</Text>
           <Text style={styles.value}>{series.volume.current}%</Text>
         </View>
+
+        <Text style={styles.sectionLabel}>Diagnostik Sensor (mentah)</Text>
+        <View style={styles.row}>
+          <Text style={styles.label}>Res_16 (LIG cadangan)</Text>
+          <Text style={styles.value}>{series.diagnostics.res16 ?? '—'}</Text>
+        </View>
+        <View style={styles.row}>
+          <Text style={styles.label}>Kap_4</Text>
+          <Text style={styles.value}>{series.diagnostics.kap4 ?? '—'}</Text>
+        </View>
+        <View style={styles.row}>
+          <Text style={styles.label}>Kap_5</Text>
+          <Text style={styles.value}>{series.diagnostics.kap5 ?? '—'}</Text>
+        </View>
       </View>
     </SheetModal>
   );
@@ -35,6 +49,15 @@ export function SensorInfoModal({ visible, onClose }: { visible: boolean; onClos
 
 const styles = StyleSheet.create({
   content: { gap: 4 },
+  sectionLabel: {
+    fontFamily: 'Inter',
+    fontSize: 11,
+    fontWeight: '700',
+    color: COLOR.textLight,
+    textTransform: 'uppercase',
+    marginTop: 12,
+    marginBottom: 2,
+  },
   row: {
     flexDirection: 'row',
     justifyContent: 'space-between',
