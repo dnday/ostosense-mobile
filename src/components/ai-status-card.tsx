@@ -7,10 +7,15 @@ import type { SensorQuality } from '@/hooks/use-sensor-series';
 
 // ponytail: 30s = ~6 siklus polling (5s) terlewat sebelum dianggap offline, bukan angka resmi.
 const OFFLINE_MS = 30000;
-const GOOD_QUALITY = ['OK', 'NORMAL'];
+// Enum kualitas per OSTOSENSE-AI/docs/ai-data-contract-v1.1.md. cap_quality/lig_quality
+// pakai satu daftar, system_quality (turunan keduanya) pakai daftar sendiri — beda enum.
+// "NOT_EVALUATED" (default firmware sekarang, belum ada evaluasi kualitas per-sampel) BUKAN
+// bad — itu "belum dinilai", beda dari OK/NORMAL tapi juga beda dari benar-benar rusak.
+const BAD_CHANNEL_QUALITY = ['DISCONNECTED', 'ADC_SATURATED', 'BASELINE_INVALID', 'DATA_GAP'];
+const BAD_SYSTEM_QUALITY = ['FAILSAFE_DEGRADED', 'UNSAFE'];
 
-function isBadQuality(v: string | null) {
-  return !!v && !GOOD_QUALITY.includes(v.toUpperCase());
+function isBad(v: string | null, badValues: string[]) {
+  return !!v && badValues.includes(v.toUpperCase());
 }
 
 export function AiStatusCard({
@@ -23,7 +28,11 @@ export function AiStatusCard({
   const prediction = useAiPrediction();
 
   const offline = lastUpdatedAt === null || Date.now() - lastUpdatedAt > OFFLINE_MS;
-  const sensorProblem = !offline && (isBadQuality(quality.cap) || isBadQuality(quality.lig) || isBadQuality(quality.system));
+  const sensorProblem =
+    !offline &&
+    (isBad(quality.cap, BAD_CHANNEL_QUALITY) ||
+      isBad(quality.lig, BAD_CHANNEL_QUALITY) ||
+      isBad(quality.system, BAD_SYSTEM_QUALITY));
 
   let title: string;
   let detail: string;
