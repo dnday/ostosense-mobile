@@ -1,4 +1,5 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { useFocusEffect } from 'expo-router';
 import { supabase } from '../lib/supabase';
 
 type Calibration = {
@@ -165,6 +166,15 @@ export function useSensorSeries() {
 
     return () => clearInterval(interval);
   }, []);
+
+  // Tab bar (Beranda/Monitor) tetap mounted saat pindah tab — polling 5 detik di
+  // atas terus jalan di background, tapi kalau baru balik ke tab ini bisa kelihatan
+  // "diam" sampai 5 detik. Tarik data terbaru langsung begitu tab difokus lagi.
+  useFocusEffect(
+    useCallback(() => {
+      fetchSensorData();
+    }, []),
+  );
 
   return { series, refetch: fetchSensorData };
 }
