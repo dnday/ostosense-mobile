@@ -18,7 +18,6 @@ import {
   Shield,
   ShieldCheck,
   Package,
-  Droplets,
   BarChart3,
   MapPin,
   BookOpen,
@@ -131,7 +130,7 @@ export default function HomePage() {
             </View>
           </View>
 
-          {/* ─── 3 Sensor Metric Cards ─── */}
+          {/* ─── 2 Sensor Metric Cards ─── */}
           <View style={styles.metricsRow}>
             <View style={styles.metricCard}>
               <View style={[styles.metricIconWrap, { backgroundColor: '#dbeafe' }]}>
@@ -153,15 +152,6 @@ export default function HomePage() {
                 {aiPrediction.state === 'unavailable' ? 'Belum tersedia' : aiPrediction.riskClass}
               </Text>
               <View style={styles.metricStatusDot} />
-            </View>
-
-            <View style={styles.metricCard}>
-              <View style={[styles.metricIconWrap, { backgroundColor: '#cefafe' }]}>
-                <Droplets color="#0092b8" size={20} />
-              </View>
-              <Text style={styles.metricLabel}>Kulit</Text>
-              <Text style={[styles.metricValue, { color: '#0092b8' }]}>{series.kulit.current}%</Text>
-              <View style={[styles.metricStatusDot, { backgroundColor: '#0092b8' }]} />
             </View>
           </View>
 

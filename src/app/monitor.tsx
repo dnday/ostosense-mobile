@@ -1,6 +1,6 @@
 import { useSensorSeries } from "@/hooks/use-sensor-series";
 import { Platform, SafeAreaView, ScrollView, StatusBar, StyleSheet, Text, View } from 'react-native';
-import { Droplets, History, Package } from 'lucide-react-native';
+import { History, Package } from 'lucide-react-native';
 
 import { AiStatusCard } from '@/components/ai-status-card';
 import { BottomNav } from '@/components/bottom-nav';
@@ -36,7 +36,7 @@ function CardHeader({
 }
 
 export default function MonitorPage() {
-  const { series: { volume, kulit, history, quality, lastUpdatedAt } } = useSensorSeries();
+  const { series: { volume, history, quality, lastUpdatedAt } } = useSensorSeries();
   return (
     <SafeAreaView style={styles.safeArea}>
       <StatusBar barStyle="dark-content" backgroundColor={COLOR.bg} />
@@ -69,24 +69,6 @@ export default function MonitorPage() {
               <Text style={styles.statusText}>
                 <Text style={[styles.statusLabel, { color: '#007a55' }]}>Status:</Text> Volume{' '}
                 <Text style={styles.statusBold}>{volume.current}%</Text> - {volume.status}
-              </Text>
-            </View>
-          </View>
-
-          {/* ─── Integritas Kulit (baseplate, dari sensor LIG) ─── */}
-          <View style={styles.card}>
-            <CardHeader
-              Icon={Droplets}
-              iconBg="#f3e8ff"
-              iconColor="#9333ea"
-              title="Integritas Kulit"
-              subtitle="Degradasi hidrokoloid dari sensor LIG"
-            />
-            <LineChart labels={kulit.labels} data={kulit.data} color="#a23bf0" />
-            <View style={[styles.statusBox, { backgroundColor: '#f3e8ff', borderColor: '#e9d5ff' }]}>
-              <Text style={styles.statusText}>
-                <Text style={[styles.statusLabel, { color: '#9333ea' }]}>Status:</Text> Integritas{' '}
-                <Text style={styles.statusBold}>{kulit.current}%</Text> - {kulit.status}
               </Text>
             </View>
           </View>

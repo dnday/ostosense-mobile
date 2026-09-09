@@ -5,39 +5,28 @@ import { supabase } from '../lib/supabase';
 type Calibration = {
   cap_empty: number;
   cap_full: number;
-  lig_base: number;
-  lig_dead: number;
   humid_high: number;
 };
 
 // ponytail: fallback kalau tabel sensor_calibration kosong/gak keload — sama dengan
 // default lama sebelum kalibrasi dipindah ke Settings web (tabel `sensor_calibration`).
-// Diturunkan dari data kalibrasi asli (P001-P007 + sesi OSTOSENSE_*). cap_empty/
-// cap_full dari median Kap_7 kondisi kering (P001) vs kantong penuh (P007,
-// dipangkas dari noise). lig_base/lig_dead dari rata-rata Res_15+Res_16: kontak
-// cairan bikin nilai NAIK (kebalik dari asumsi simulator lama), jadi lig_base
-// < lig_dead di sini.
+// Diturunkan dari data kalibrasi asli (P001-P007 + sesi OSTOSENSE_*): median
+// Kap_7 kondisi kering (P001) vs kantong penuh (P007, dipangkas dari noise).
 const DEFAULT_CALIBRATION: Calibration = {
   cap_empty: 30000,
   cap_full: 250000,
-  lig_base: 10,
-  lig_dead: 1470,
   humid_high: 60,
 };
-
-// ponytail: belum ada kolom kalibrasi khusus buat ambang integritas kulit di
-// sensor_calibration — hardcode di sini sampai ada kebutuhan diedit dari Settings.
-const SKIN_INTEGRITY_WARNING_BELOW = 50;
-const LIG_SMOOTH_WINDOW = 5;
 
 const clamp = (v: number) => Math.max(0, Math.min(100, Math.round(v)));
 
 export type SensorQuality = { cap: string | null; lig: string | null; system: string | null };
 
-// Kap_4/Kap_5/Res_16 — channel yang direkam hardware tapi belum ada makna/kalibrasi
-// produk sendiri (Kap_7 dikunci sebagai kanal kapasitif utama, Res_15+Res_16
-// dirata-rata jadi satu "kulit"). Ditampilkan mentah sebagai diagnostik, bukan
-// metrik dengan threshold seperti volume/kulit.
+// Res_15/Res_16/Kap_4/Kap_5 — channel yang direkam hardware tapi belum ada makna/
+// kalibrasi produk sendiri (Kap_7 dikunci sebagai kanal kapasitif utama). "Integritas
+// Kulit" yang dulu dihitung dari sini dihapus: rumusnya cuma kalibrasi linear 2-titik
+// dari data pilot internal, tanpa dasar biofisika/klinis tervalidasi — lihat
+// OSTOSENSE-AI untuk status validasi. Ditampilkan mentah sebagai diagnostik saja.
 export type SensorDiagnostics = { res16: number | null; kap4: number | null; kap5: number | null };
 
 export type SensorSeries = {
@@ -48,11 +37,6 @@ export type SensorSeries = {
   quality: SensorQuality;
   diagnostics: SensorDiagnostics;
   volume: { labels: string[]; data: number[]; current: number; status: string };
-  // Integritas hidrokoloid/baseplate dari sensor LIG (resistif) — BUKAN dari sensor
-  // kapasitif kantong. Tidak ada sensor kelembaban kulit terpisah di hardware ini,
-  // jadi field "kelembaban" lama (yang sebenarnya dihitung dari kapasitansi kantong)
-  // dihapus daripada dipalsukan seolah data kulit.
-  kulit: { labels: string[]; data: number[]; current: number; status: string };
   history: { time: string; desc: string; status: 'Normal' | 'Tinggi' }[];
 };
 
@@ -62,12 +46,6 @@ const FALLBACK: SensorSeries = {
   quality: { cap: null, lig: null, system: null },
   diagnostics: { res16: null, kap4: null, kap5: null },
   volume: {
-    labels: ['08:00', '10:00', '12:00', '14:00', '16:00', '18:00'],
-    data: [0, 0, 0, 0, 0, 0],
-    current: 0,
-    status: 'Memuat data...',
-  },
-  kulit: {
     labels: ['08:00', '10:00', '12:00', '14:00', '16:00', '18:00'],
     data: [0, 0, 0, 0, 0, 0],
     current: 0,
@@ -84,17 +62,16 @@ export function useSensorSeries() {
     try {
       const { data, error } = await supabase
         .from('sensor_logs')
-        .select('timestamp, capacitance_raw, lig_raw, cap_quality, lig_quality, system_quality, res_16_raw, kap_4_raw, kap_5_raw')
+        .select('timestamp, capacitance_raw, cap_quality, lig_quality, system_quality, res_16_raw, kap_4_raw, kap_5_raw')
         .order('timestamp', { ascending: false })
         .limit(120);
 
       if (error || !data || data.length === 0) return;
 
       const logs = data.reverse();
-      const { cap_empty, cap_full, lig_base, lig_dead } = calibrationRef.current;
+      const { cap_empty, cap_full } = calibrationRef.current;
 
       const volPct = (cap: number) => clamp(((cap - cap_empty) / (cap_full - cap_empty)) * 100);
-      const integPct = (lig: number) => clamp(((lig - lig_dead) / (lig_base - lig_dead)) * 100);
 
       const hhmm = (iso: string) => {
         const d = new Date(iso);
@@ -107,22 +84,13 @@ export function useSensorSeries() {
 
       const last = logs[logs.length - 1];
       const currentVol = volPct(last.capacitance_raw);
-      // lig_raw sample-per-sample sangat berisik (data pilot: lompat 1 -> 1194 -> 3
-      // antar sample berturut-turut) — rata-ratakan beberapa sample terakhir biar
-      // angka "current" gak kelap-kelip, bukan dari satu bacaan mentah.
-      const recentLig = logs.slice(-LIG_SMOOTH_WINDOW);
-      const avgLig = recentLig.reduce((sum, l) => sum + l.lig_raw, 0) / recentLig.length;
-      const currentInteg = integPct(avgLig);
 
-      const historyData = pts.slice().reverse().map((p, i) => {
-          const kind = i % 2;
-          const val = kind === 0 ? volPct(p.capacitance_raw) : integPct(p.lig_raw);
-          const label = kind === 0 ? 'Volume' : 'Integritas Kulit';
-          const flagged = kind === 0 ? val > 80 : val < SKIN_INTEGRITY_WARNING_BELOW;
+      const historyData = pts.slice().reverse().map((p) => {
+          const val = volPct(p.capacitance_raw);
           return {
             time: hhmm(p.timestamp),
-            desc: `${label}: ${val}%`,
-            status: (flagged ? 'Tinggi' : 'Normal') as 'Normal' | 'Tinggi',
+            desc: `Volume: ${val}%`,
+            status: (val > 80 ? 'Tinggi' : 'Normal') as 'Normal' | 'Tinggi',
           };
         });
 
@@ -140,12 +108,6 @@ export function useSensorSeries() {
           data: pts.map((p) => volPct(p.capacitance_raw)),
           current: currentVol,
           status: currentVol < 80 ? 'Kapasitas aman' : 'Segera ganti kantong',
-        },
-        kulit: {
-          labels: pts.map((p) => hhmm(p.timestamp)),
-          data: pts.map((p) => integPct(p.lig_raw)),
-          current: currentInteg,
-          status: currentInteg >= SKIN_INTEGRITY_WARNING_BELOW ? 'Integritas baik' : 'Perlu diperiksa',
         },
         history: historyData,
       });
