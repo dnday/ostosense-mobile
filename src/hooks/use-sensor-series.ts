@@ -22,12 +22,17 @@ const clamp = (v: number) => Math.max(0, Math.min(100, Math.round(v)));
 
 export type SensorQuality = { cap: string | null; lig: string | null; system: string | null };
 
-// Res_15/Res_16/Kap_4/Kap_5 — channel yang direkam hardware tapi belum ada makna/
-// kalibrasi produk sendiri (Kap_7 dikunci sebagai kanal kapasitif utama). "Integritas
-// Kulit" yang dulu dihitung dari sini dihapus: rumusnya cuma kalibrasi linear 2-titik
-// dari data pilot internal, tanpa dasar biofisika/klinis tervalidasi — lihat
-// OSTOSENSE-AI untuk status validasi. Ditampilkan mentah sebagai diagnostik saja.
-export type SensorDiagnostics = { res16: number | null; kap4: number | null; kap5: number | null };
+// Res_15 (elektroda DALAM baseplate) = failsafe/deteksi dini, Res_16 (elektroda LUAR
+// baseplate) = kebocoran hampir/sedang menembus keluar — dua sinyal fisik berbeda.
+// Kap_7 dikunci sebagai kanal volume; Kap_4/Kap_5 merepresentasikan kelembapan di
+// sekitar baseplate. Nilai mentah (Ω / raw ADC), belum dikalibrasi jadi persentase —
+// belum ada dasar biofisika/klinis tervalidasi untuk itu. Ditampilkan mentah saja.
+export type SensorDiagnostics = {
+  res15: number | null;
+  res16: number | null;
+  kap4: number | null;
+  kap5: number | null;
+};
 
 export type SensorSeries = {
   source: 'supabase' | 'fallback' | 'loading';
@@ -44,7 +49,7 @@ const FALLBACK: SensorSeries = {
   source: 'loading',
   lastUpdatedAt: null,
   quality: { cap: null, lig: null, system: null },
-  diagnostics: { res16: null, kap4: null, kap5: null },
+  diagnostics: { res15: null, res16: null, kap4: null, kap5: null },
   volume: {
     labels: ['08:00', '10:00', '12:00', '14:00', '16:00', '18:00'],
     data: [0, 0, 0, 0, 0, 0],
@@ -62,7 +67,7 @@ export function useSensorSeries() {
     try {
       const { data, error } = await supabase
         .from('sensor_logs')
-        .select('timestamp, capacitance_raw, cap_quality, lig_quality, system_quality, res_16_raw, kap_4_raw, kap_5_raw')
+        .select('timestamp, capacitance_raw, cap_quality, lig_quality, system_quality, res_15_raw, res_16_raw, kap_4_raw, kap_5_raw')
         .order('timestamp', { ascending: false })
         .limit(120);
 
@@ -99,6 +104,7 @@ export function useSensorSeries() {
         lastUpdatedAt: Date.now(),
         quality: { cap: last.cap_quality ?? null, lig: last.lig_quality ?? null, system: last.system_quality ?? null },
         diagnostics: {
+          res15: last.res_15_raw ?? null,
           res16: last.res_16_raw ?? null,
           kap4: last.kap_4_raw ?? null,
           kap5: last.kap_5_raw ?? null,

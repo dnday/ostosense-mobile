@@ -1,6 +1,6 @@
 import { useSensorSeries } from "@/hooks/use-sensor-series";
 import { Platform, SafeAreaView, ScrollView, StatusBar, StyleSheet, Text, View } from 'react-native';
-import { History, Package } from 'lucide-react-native';
+import { Droplets, History, Package } from 'lucide-react-native';
 
 import { AiStatusCard } from '@/components/ai-status-card';
 import { BottomNav } from '@/components/bottom-nav';
@@ -36,7 +36,7 @@ function CardHeader({
 }
 
 export default function MonitorPage() {
-  const { series: { volume, history, quality, lastUpdatedAt } } = useSensorSeries();
+  const { series: { volume, diagnostics, history, quality, lastUpdatedAt } } = useSensorSeries();
   return (
     <SafeAreaView style={styles.safeArea}>
       <StatusBar barStyle="dark-content" backgroundColor={COLOR.bg} />
@@ -70,6 +70,37 @@ export default function MonitorPage() {
                 <Text style={[styles.statusLabel, { color: '#007a55' }]}>Status:</Text> Volume{' '}
                 <Text style={styles.statusBold}>{volume.current}%</Text> - {volume.status}
               </Text>
+            </View>
+          </View>
+
+          {/* ─── Diagnostik Sensor LIG (mentah) ─── */}
+          <View style={styles.card}>
+            <CardHeader
+              Icon={Droplets}
+              iconBg="#dbeafe"
+              iconColor="#1447e6"
+              title="Diagnostik Sensor Baseplate"
+              subtitle="Bacaan mentah, belum ada interpretasi klinis"
+            />
+            <View style={styles.diagRow}>
+              <View style={styles.diagCell}>
+                <Text style={styles.diagLabel}>Failsafe (dalam)</Text>
+                <Text style={styles.diagValue}>{diagnostics.res15 ?? '—'}</Text>
+              </View>
+              <View style={styles.diagCell}>
+                <Text style={styles.diagLabel}>Kebocoran (luar)</Text>
+                <Text style={styles.diagValue}>{diagnostics.res16 ?? '—'}</Text>
+              </View>
+            </View>
+            <View style={styles.diagRow}>
+              <View style={styles.diagCell}>
+                <Text style={styles.diagLabel}>Kelembapan Kap_4</Text>
+                <Text style={styles.diagValue}>{diagnostics.kap4 ?? '—'}</Text>
+              </View>
+              <View style={styles.diagCell}>
+                <Text style={styles.diagLabel}>Kelembapan Kap_5</Text>
+                <Text style={styles.diagValue}>{diagnostics.kap5 ?? '—'}</Text>
+              </View>
             </View>
           </View>
 
@@ -220,6 +251,37 @@ const styles = StyleSheet.create({
   },
   statusBold: {
     fontWeight: '700',
+  },
+
+  /* ── Diagnostik ── */
+  diagRow: {
+    flexDirection: 'row',
+    gap: 8,
+  },
+  diagCell: {
+    flex: 1,
+    backgroundColor: '#f9fafb',
+    borderWidth: 1,
+    borderColor: '#f3f4f6',
+    borderRadius: 8,
+    paddingHorizontal: 11,
+    paddingVertical: 8,
+    alignItems: 'center',
+  },
+  diagLabel: {
+    fontFamily: 'Inter',
+    fontSize: 10,
+    fontWeight: '400',
+    color: COLOR.textLight,
+    lineHeight: 14,
+  },
+  diagValue: {
+    fontFamily: 'Inter',
+    fontSize: 14,
+    fontWeight: '700',
+    color: COLOR.text,
+    lineHeight: 20,
+    marginTop: 2,
   },
 
   /* ── Legend ── */
