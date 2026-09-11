@@ -14,7 +14,7 @@ import { useRouter } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import {
   Bell,
-  CalendarClock,
+  AlertTriangle,
   Shield,
   ShieldCheck,
   Package,
@@ -71,13 +71,13 @@ export default function HomePage() {
           {isWarning && (
             <TouchableOpacity style={styles.warningBanner} activeOpacity={0.8} onPress={() => router.push('/monitor')}>
               <View style={styles.warningIconWrap}>
-                <CalendarClock color={COLOR.warningIcon} size={20} />
+                <AlertTriangle color={COLOR.red} size={20} />
               </View>
               <View style={styles.warningTextWrap}>
                 <Text style={styles.warningTitle}>Perhatian!</Text>
                 <Text style={styles.warningDesc}>Volume penuh atau risiko kebocoran terdeteksi.</Text>
               </View>
-              <ChevronRight color={COLOR.warningIcon} size={16} />
+              <ChevronRight color={COLOR.red} size={16} />
             </TouchableOpacity>
           )}
 
@@ -297,7 +297,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: '#ffe2e2',
+    backgroundColor: COLOR.redBorder,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -316,7 +316,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Inter',
     fontSize: 11,
     fontWeight: '400',
-    color: '#b91c1c',
+    color: COLOR.red,
     lineHeight: 15,
   },
 
