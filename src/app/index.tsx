@@ -42,10 +42,19 @@ export default function HomePage() {
 
   // AI eksperimental cuma dipakai buat eskalasi visual di sini, bukan notifikasi
   // (lihat OSTOSENSE-AI/docs/ai-software-integration-contract-v0.2.md).
-  const aiUrgent =
-    (aiPrediction.state === 'ready' || aiPrediction.state === 'stale') &&
-    (aiPrediction.riskClass === 'Caution' || aiPrediction.riskClass === 'Urgent');
+  const hasAiReading = aiPrediction.state === 'ready' || aiPrediction.state === 'stale';
+  const aiUrgent = hasAiReading && (aiPrediction.riskClass === 'Caution' || aiPrediction.riskClass === 'Urgent');
   const isWarning = series.volume.current > 80 || aiUrgent;
+
+  // Warna kartu Klasifikasi AI HARUS ngikutin kelas yang beneran, bukan hijau
+  // selalu — Urgent/Caution harus kelihatan beda dari Safe/Monitor sekilas.
+  const aiTone = !hasAiReading
+    ? { bg: COLOR.greenLight, fg: COLOR.green }
+    : aiPrediction.riskClass === 'Urgent'
+      ? { bg: COLOR.redBg, fg: COLOR.red }
+      : aiPrediction.riskClass === 'Caution'
+        ? { bg: '#fef3c6', fg: '#92400e' }
+        : { bg: COLOR.greenLight, fg: COLOR.green };
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -154,18 +163,18 @@ export default function HomePage() {
             </View>
 
             <View style={styles.metricCard}>
-              <View style={[styles.metricIconWrap, { backgroundColor: COLOR.greenLight }]}>
-                <ShieldCheck color={COLOR.green} size={20} />
+              <View style={[styles.metricIconWrap, { backgroundColor: aiTone.bg }]}>
+                <ShieldCheck color={aiTone.fg} size={20} />
               </View>
               <Text style={styles.metricLabel}>Klasifikasi AI</Text>
               {series.source === 'loading' ? (
                 <Skeleton style={{ width: 72, height: 18, marginTop: 4 }} />
               ) : (
-                <Text style={[styles.metricValueSmall, { color: COLOR.green }]} numberOfLines={1}>
+                <Text style={[styles.metricValueSmall, { color: aiTone.fg }]} numberOfLines={1}>
                   {aiPrediction.state === 'unavailable' ? 'Belum tersedia' : aiPrediction.riskClass}
                 </Text>
               )}
-              <View style={styles.metricStatusDot} />
+              <View style={[styles.metricStatusDot, { backgroundColor: aiTone.fg }]} />
             </View>
           </View>
 
