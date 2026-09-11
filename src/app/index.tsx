@@ -134,8 +134,8 @@ export default function HomePage() {
           {/* ─── 2 Sensor Metric Cards ─── */}
           <View style={styles.metricsRow}>
             <View style={styles.metricCard}>
-              <View style={[styles.metricIconWrap, { backgroundColor: '#dbeafe' }]}>
-                <Package color="#155dfc" size={20} />
+              <View style={[styles.metricIconWrap, { backgroundColor: COLOR.blueLight }]}>
+                <Package color={COLOR.blue} size={20} />
               </View>
               <Text style={styles.metricLabel}>Volume</Text>
               {series.source === 'loading' ? (
@@ -154,14 +154,14 @@ export default function HomePage() {
             </View>
 
             <View style={styles.metricCard}>
-              <View style={[styles.metricIconWrap, { backgroundColor: '#d0fae5' }]}>
-                <ShieldCheck color="#007a55" size={20} />
+              <View style={[styles.metricIconWrap, { backgroundColor: COLOR.greenLight }]}>
+                <ShieldCheck color={COLOR.green} size={20} />
               </View>
               <Text style={styles.metricLabel}>Klasifikasi AI</Text>
               {series.source === 'loading' ? (
                 <Skeleton style={{ width: 72, height: 18, marginTop: 4 }} />
               ) : (
-                <Text style={[styles.metricValueSmall, { color: '#007a55' }]} numberOfLines={1}>
+                <Text style={[styles.metricValueSmall, { color: COLOR.green }]} numberOfLines={1}>
                   {aiPrediction.state === 'unavailable' ? 'Belum tersedia' : aiPrediction.riskClass}
                 </Text>
               )}
@@ -540,13 +540,13 @@ const styles = StyleSheet.create({
   metricBarFill: {
     height: '100%',
     borderRadius: 2,
-    backgroundColor: '#155dfc',
+    backgroundColor: COLOR.blue,
   },
   metricStatusDot: {
     width: 6,
     height: 6,
     borderRadius: 3,
-    backgroundColor: '#00bc7d',
+    backgroundColor: COLOR.green,
     marginTop: 5,
   },
 

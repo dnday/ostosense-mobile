@@ -57,7 +57,7 @@ export function AiStatusCard({
     tone =
       prediction.state === 'stale'
         ? { bg: '#fef3c6', border: '#fde68a', text: '#92400e' }
-        : { bg: COLOR.blueLight, border: '#dbeafe', text: '#1447e6' };
+        : { bg: COLOR.blueLight, border: COLOR.blueLight, text: COLOR.blue };
   }
 
   return (

@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import {
   Platform,
   SafeAreaView,
@@ -9,15 +10,24 @@ import {
   View,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Cross, MapPin, Pill, Toilet } from 'lucide-react-native';
+import { Cross, MapPin, Pill } from 'lucide-react-native';
 
 import { BottomNav } from '@/components/bottom-nav';
 import { FacilityMap } from '@/components/facility-map';
 import { COLOR } from '@/constants/app-colors';
 
+// Custom toilet icon
+function Toilet(props: any) {
+  return (
+    <View style={{ width: props.size, height: props.size, justifyContent: 'center', alignItems: 'center' }}>
+      <View style={{ width: props.size * 0.6, height: props.size * 0.8, borderWidth: 1.5, borderColor: props.color, borderRadius: 4 }} />
+    </View>
+  );
+}
+
 const KIND = {
-  toilet: { Icon: Toilet, gradient: ['#615fff', '#4f39f6'] as const },
-  rs: { Icon: Cross, gradient: ['#00b8db', '#0092b8'] as const },
+  toilet: { Icon: Toilet, gradient: ['#8b5cf6', '#615fff'] as const },
+  rs: { Icon: Cross, gradient: ['#06b6d4', '#00b8db'] as const },
   apotek: { Icon: Pill, gradient: ['#2b7fff', '#155dfc'] as const },
 };
 
@@ -32,8 +42,13 @@ const LOCATIONS: { kind: keyof typeof KIND; name: string; address: string; dista
   { kind: 'toilet', name: 'Toilet Accessible FX Sudirman', address: 'Jl. Jend. Sudirman, Jakarta Pusat', distance: '1.5 km', hours: '10:00 - 22:00' },
 ];
 
-// ponytail: filter chips and map are static mockup (map = Figma PNG export). Wire real filtering + a map lib when there's real location data.
 export default function LokasiPage() {
+  const [filter, setFilter] = useState<string>('Semua');
+
+  const filteredLocations = filter === 'Semua' 
+    ? LOCATIONS 
+    : LOCATIONS.filter(l => (filter === 'Toilet' && l.kind === 'toilet') || (filter === 'RS' && l.kind === 'rs') || (filter === 'Apotek' && l.kind === 'apotek'));
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <StatusBar barStyle="dark-content" backgroundColor={COLOR.white} />
@@ -46,8 +61,12 @@ export default function LokasiPage() {
 
         {/* ─── Filter Chips ─── */}
         <View style={styles.chipRow}>
-          <TouchableOpacity style={[styles.chip, styles.chipActive]} activeOpacity={0.7}>
-            <Text style={styles.chipActiveText}>Semua</Text>
+          <TouchableOpacity 
+            style={[styles.chip, filter === 'Semua' && styles.chipActive]} 
+            activeOpacity={0.7}
+            onPress={() => setFilter('Semua')}
+          >
+            <Text style={filter === 'Semua' ? styles.chipActiveText : styles.chipText}>Semua</Text>
           </TouchableOpacity>
           {(
             [
@@ -56,9 +75,14 @@ export default function LokasiPage() {
               ['Apotek', Pill],
             ] as const
           ).map(([label, Icon]) => (
-            <TouchableOpacity key={label} style={styles.chip} activeOpacity={0.7}>
-              <Icon color="#364153" size={14} />
-              <Text style={styles.chipText}>{label}</Text>
+            <TouchableOpacity 
+              key={label} 
+              style={[styles.chip, filter === label && styles.chipActive]} 
+              activeOpacity={0.7}
+              onPress={() => setFilter(label)}
+            >
+              <Icon color={filter === label ? COLOR.white : "#364153"} size={14} />
+              <Text style={filter === label ? styles.chipActiveText : styles.chipText}>{label}</Text>
             </TouchableOpacity>
           ))}
         </View>
@@ -69,12 +93,12 @@ export default function LokasiPage() {
         {/* ─── Bottom Sheet ─── */}
         <View style={styles.sheet}>
           <View style={styles.sheetHandle} />
-          <Text style={styles.sheetTitle}>8 Lokasi Ditemukan</Text>
+          <Text style={styles.sheetTitle}>{filteredLocations.length} Lokasi Ditemukan</Text>
           <ScrollView
             contentContainerStyle={styles.sheetList}
             showsVerticalScrollIndicator={false}
           >
-            {LOCATIONS.map(({ kind, name, address, distance, hours }) => {
+            {filteredLocations.map(({ kind, name, address, distance, hours }) => {
               const { Icon, gradient } = KIND[kind];
               return (
                 <TouchableOpacity key={name} style={styles.locCard} activeOpacity={0.7}>
@@ -95,7 +119,7 @@ export default function LokasiPage() {
                     </Text>
                     <View style={styles.locMeta}>
                       <View style={styles.distanceBadge}>
-                        <MapPin color="#1447e6" size={12} />
+                        <MapPin color={COLOR.primary} size={12} />
                         <Text style={styles.distanceText}>{distance}</Text>
                       </View>
                       <Text style={styles.hoursText}>{hours}</Text>

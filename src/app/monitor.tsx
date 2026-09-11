@@ -61,8 +61,8 @@ export default function MonitorPage() {
           <View style={styles.card}>
             <CardHeader
               Icon={Package}
-              iconBg="#d0fae5"
-              iconColor="#007a55"
+              iconBg={COLOR.blueLight}
+              iconColor={COLOR.blue}
               title="Volume Kantong"
               subtitle="Tracking kapasitas real-time"
             />
@@ -73,10 +73,10 @@ export default function MonitorPage() {
               </>
             ) : (
               <>
-                <LineChart labels={volume.labels} data={volume.data} color="#00bc7d" />
-                <View style={[styles.statusBox, { backgroundColor: COLOR.greenLight, borderColor: '#d0fae5' }]}>
+                <LineChart labels={volume.labels} data={volume.data} color={COLOR.blue} />
+                <View style={[styles.statusBox, { backgroundColor: COLOR.blueLight, borderColor: COLOR.blueLight }]}>
                   <Text style={styles.statusText}>
-                    <Text style={[styles.statusLabel, { color: '#007a55' }]}>Status:</Text> Volume{' '}
+                    <Text style={[styles.statusLabel, { color: COLOR.blue }]}>Status:</Text> Volume{' '}
                     <Text style={styles.statusBold}>{volume.current}%</Text> - {volume.status}
                   </Text>
                 </View>
@@ -88,8 +88,8 @@ export default function MonitorPage() {
           <View style={styles.card}>
             <CardHeader
               Icon={Droplets}
-              iconBg="#dbeafe"
-              iconColor="#1447e6"
+              iconBg={COLOR.tealLight}
+              iconColor={COLOR.teal}
               title="Diagnostik Sensor Baseplate"
               subtitle="Bacaan mentah, belum ada interpretasi klinis"
             />
@@ -128,8 +128,8 @@ export default function MonitorPage() {
           <View style={styles.card}>
             <CardHeader
               Icon={History}
-              iconBg="#f3e8ff"
-              iconColor="#9810fa"
+              iconBg={COLOR.primaryLight}
+              iconColor={COLOR.primary}
               title="Riwayat Terkini"
               subtitle="Catatan pembacaan sensor"
             />
@@ -140,7 +140,7 @@ export default function MonitorPage() {
                     <View
                       style={[
                         styles.historyDot,
-                        { backgroundColor: status === 'Normal' ? '#00bc7d' : '#ff9141' },
+                        { backgroundColor: status === 'Normal' ? COLOR.green : '#ff9141' },
                       ]}
                     />
                     <View>
@@ -151,13 +151,13 @@ export default function MonitorPage() {
                   <View
                     style={[
                       styles.historyBadge,
-                      { backgroundColor: status === 'Normal' ? '#d0fae5' : '#fef3c6' },
+                      { backgroundColor: status === 'Normal' ? COLOR.greenLight : '#fef3c6' },
                     ]}
                   >
                     <Text
                       style={[
                         styles.historyBadgeText,
-                        { color: status === 'Normal' ? '#007a55' : '#bb4d00' },
+                        { color: status === 'Normal' ? COLOR.green : '#bb4d00' },
                       ]}
                     >
                       {status}
