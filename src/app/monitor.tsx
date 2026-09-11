@@ -134,8 +134,11 @@ export default function MonitorPage() {
               subtitle="Catatan pembacaan sensor"
             />
             <View style={styles.historyList}>
-              {history.map(({ time, desc, status }) => (
-                <View key={`${time}-${desc}`} style={styles.historyRow}>
+              {history.map(({ time, desc, status }, i) => (
+                // key ikut index: kalau log sensor masih dikit (early load), pick(6) di
+                // use-sensor-series.ts bisa ngambil sample yang sama berkali-kali, jadi
+                // time+desc doang bisa dobel.
+                <View key={`${time}-${desc}-${i}`} style={styles.historyRow}>
                   <View style={styles.historyLeft}>
                     <View
                       style={[
