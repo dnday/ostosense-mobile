@@ -112,11 +112,11 @@ export default function MonitorPage() {
                 </View>
                 <View style={styles.diagRow}>
                   <View style={styles.diagCell}>
-                    <Text style={styles.diagLabel}>Kelembapan Kap_4</Text>
+                    <Text style={styles.diagLabel}>Kelembapan (dalam)</Text>
                     <Text style={styles.diagValue}>{diagnostics.kap4 ?? '—'}</Text>
                   </View>
                   <View style={styles.diagCell}>
-                    <Text style={styles.diagLabel}>Kelembapan Kap_5</Text>
+                    <Text style={styles.diagLabel}>Kelembapan (luar)</Text>
                     <Text style={styles.diagValue}>{diagnostics.kap5 ?? '—'}</Text>
                   </View>
                 </View>

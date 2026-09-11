@@ -31,15 +31,19 @@ export function SensorInfoModal({ visible, onClose }: { visible: boolean; onClos
 
         <Text style={styles.sectionLabel}>Diagnostik Sensor (mentah)</Text>
         <View style={styles.row}>
-          <Text style={styles.label}>Res_16 (LIG cadangan)</Text>
+          <Text style={styles.label}>Failsafe (dalam)</Text>
+          <Text style={styles.value}>{series.diagnostics.res15 ?? '—'}</Text>
+        </View>
+        <View style={styles.row}>
+          <Text style={styles.label}>Kebocoran (luar)</Text>
           <Text style={styles.value}>{series.diagnostics.res16 ?? '—'}</Text>
         </View>
         <View style={styles.row}>
-          <Text style={styles.label}>Kap_4</Text>
+          <Text style={styles.label}>Kelembapan (dalam)</Text>
           <Text style={styles.value}>{series.diagnostics.kap4 ?? '—'}</Text>
         </View>
         <View style={styles.row}>
-          <Text style={styles.label}>Kap_5</Text>
+          <Text style={styles.label}>Kelembapan (luar)</Text>
           <Text style={styles.value}>{series.diagnostics.kap5 ?? '—'}</Text>
         </View>
       </View>

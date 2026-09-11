@@ -24,8 +24,9 @@ export type SensorQuality = { cap: string | null; lig: string | null; system: st
 
 // Res_15 (elektroda DALAM baseplate) = failsafe/deteksi dini, Res_16 (elektroda LUAR
 // baseplate) = kebocoran hampir/sedang menembus keluar — dua sinyal fisik berbeda.
-// Kap_7 dikunci sebagai kanal volume; Kap_4/Kap_5 merepresentasikan kelembapan di
-// sekitar baseplate. Nilai mentah (Ω / raw ADC), belum dikalibrasi jadi persentase —
+// Kap_7 dikunci sebagai kanal volume; Kap_4 (dalam) dan Kap_5 (luar) merepresentasikan
+// kelembapan di dua posisi baseplate yang sama (sensor identik, cuma beda posisi,
+// seperti Res_15/Res_16). Nilai mentah (Ω / raw ADC), belum dikalibrasi jadi persentase —
 // belum ada dasar biofisika/klinis tervalidasi untuk itu. Ditampilkan mentah saja.
 export type SensorDiagnostics = {
   res15: number | null;
