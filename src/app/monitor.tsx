@@ -5,6 +5,7 @@ import { Droplets, History, Package } from 'lucide-react-native';
 import { AiStatusCard } from '@/components/ai-status-card';
 import { BottomNav } from '@/components/bottom-nav';
 import { LineChart } from '@/components/charts';
+import { Skeleton } from '@/components/skeleton';
 import { COLOR } from '@/constants/app-colors';
 
 
@@ -36,7 +37,8 @@ function CardHeader({
 }
 
 export default function MonitorPage() {
-  const { series: { volume, diagnostics, history, quality, lastUpdatedAt } } = useSensorSeries();
+  const { series: { source, volume, diagnostics, history, quality, lastUpdatedAt } } = useSensorSeries();
+  const loading = source === 'loading';
   return (
     <SafeAreaView style={styles.safeArea}>
       <StatusBar barStyle="dark-content" backgroundColor={COLOR.bg} />
@@ -64,13 +66,22 @@ export default function MonitorPage() {
               title="Volume Kantong"
               subtitle="Tracking kapasitas real-time"
             />
-            <LineChart labels={volume.labels} data={volume.data} color="#00bc7d" />
-            <View style={[styles.statusBox, { backgroundColor: COLOR.greenLight, borderColor: '#d0fae5' }]}>
-              <Text style={styles.statusText}>
-                <Text style={[styles.statusLabel, { color: '#007a55' }]}>Status:</Text> Volume{' '}
-                <Text style={styles.statusBold}>{volume.current}%</Text> - {volume.status}
-              </Text>
-            </View>
+            {loading ? (
+              <>
+                <Skeleton style={{ width: '100%', height: 120, borderRadius: 8 }} />
+                <Skeleton style={{ width: '100%', height: 36, borderRadius: 8, marginTop: 4 }} />
+              </>
+            ) : (
+              <>
+                <LineChart labels={volume.labels} data={volume.data} color="#00bc7d" />
+                <View style={[styles.statusBox, { backgroundColor: COLOR.greenLight, borderColor: '#d0fae5' }]}>
+                  <Text style={styles.statusText}>
+                    <Text style={[styles.statusLabel, { color: '#007a55' }]}>Status:</Text> Volume{' '}
+                    <Text style={styles.statusBold}>{volume.current}%</Text> - {volume.status}
+                  </Text>
+                </View>
+              </>
+            )}
           </View>
 
           {/* ─── Diagnostik Sensor LIG (mentah) ─── */}
@@ -82,26 +93,35 @@ export default function MonitorPage() {
               title="Diagnostik Sensor Baseplate"
               subtitle="Bacaan mentah, belum ada interpretasi klinis"
             />
-            <View style={styles.diagRow}>
-              <View style={styles.diagCell}>
-                <Text style={styles.diagLabel}>Failsafe (dalam)</Text>
-                <Text style={styles.diagValue}>{diagnostics.res15 ?? '—'}</Text>
+            {loading ? (
+              <View style={styles.diagRow}>
+                <Skeleton style={{ flex: 1, height: 52, borderRadius: 8 }} />
+                <Skeleton style={{ flex: 1, height: 52, borderRadius: 8 }} />
               </View>
-              <View style={styles.diagCell}>
-                <Text style={styles.diagLabel}>Kebocoran (luar)</Text>
-                <Text style={styles.diagValue}>{diagnostics.res16 ?? '—'}</Text>
-              </View>
-            </View>
-            <View style={styles.diagRow}>
-              <View style={styles.diagCell}>
-                <Text style={styles.diagLabel}>Kelembapan Kap_4</Text>
-                <Text style={styles.diagValue}>{diagnostics.kap4 ?? '—'}</Text>
-              </View>
-              <View style={styles.diagCell}>
-                <Text style={styles.diagLabel}>Kelembapan Kap_5</Text>
-                <Text style={styles.diagValue}>{diagnostics.kap5 ?? '—'}</Text>
-              </View>
-            </View>
+            ) : (
+              <>
+                <View style={styles.diagRow}>
+                  <View style={styles.diagCell}>
+                    <Text style={styles.diagLabel}>Failsafe (dalam)</Text>
+                    <Text style={styles.diagValue}>{diagnostics.res15 ?? '—'}</Text>
+                  </View>
+                  <View style={styles.diagCell}>
+                    <Text style={styles.diagLabel}>Kebocoran (luar)</Text>
+                    <Text style={styles.diagValue}>{diagnostics.res16 ?? '—'}</Text>
+                  </View>
+                </View>
+                <View style={styles.diagRow}>
+                  <View style={styles.diagCell}>
+                    <Text style={styles.diagLabel}>Kelembapan Kap_4</Text>
+                    <Text style={styles.diagValue}>{diagnostics.kap4 ?? '—'}</Text>
+                  </View>
+                  <View style={styles.diagCell}>
+                    <Text style={styles.diagLabel}>Kelembapan Kap_5</Text>
+                    <Text style={styles.diagValue}>{diagnostics.kap5 ?? '—'}</Text>
+                  </View>
+                </View>
+              </>
+            )}
           </View>
 
           {/* ─── Riwayat Terkini ─── */}

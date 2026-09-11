@@ -1,0 +1,6 @@
+{
+  "name": "ostosense-mobile-pkm",
+  "buildCommand": "npx expo export -p web",
+  "outputDirectory": "dist",
+  "cleanUrls": true
+}

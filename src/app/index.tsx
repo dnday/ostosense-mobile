@@ -29,6 +29,7 @@ import {
 
 import { BottomNav } from '@/components/bottom-nav';
 import { NotificationsModal } from '@/components/notifications-modal';
+import { Skeleton } from '@/components/skeleton';
 import { COLOR } from '@/constants/app-colors';
 import { useSensorSeries } from '@/hooks/use-sensor-series';
 import { useAiPrediction } from '@/hooks/use-ai-prediction';
@@ -137,10 +138,19 @@ export default function HomePage() {
                 <Package color="#155dfc" size={20} />
               </View>
               <Text style={styles.metricLabel}>Volume</Text>
-              <Text style={styles.metricValue}>{series.volume.current}%</Text>
-              <View style={styles.metricBarTrack}>
-                <View style={[styles.metricBarFill, { width: `${series.volume.current}%` }]} />
-              </View>
+              {series.source === 'loading' ? (
+                <>
+                  <Skeleton style={{ width: 48, height: 22, marginTop: 4 }} />
+                  <Skeleton style={{ width: '100%', height: 6, marginTop: 10, borderRadius: 3 }} />
+                </>
+              ) : (
+                <>
+                  <Text style={styles.metricValue}>{series.volume.current}%</Text>
+                  <View style={styles.metricBarTrack}>
+                    <View style={[styles.metricBarFill, { width: `${series.volume.current}%` }]} />
+                  </View>
+                </>
+              )}
             </View>
 
             <View style={styles.metricCard}>
@@ -148,9 +158,13 @@ export default function HomePage() {
                 <ShieldCheck color="#007a55" size={20} />
               </View>
               <Text style={styles.metricLabel}>Klasifikasi AI</Text>
-              <Text style={[styles.metricValueSmall, { color: '#007a55' }]} numberOfLines={1}>
-                {aiPrediction.state === 'unavailable' ? 'Belum tersedia' : aiPrediction.riskClass}
-              </Text>
+              {series.source === 'loading' ? (
+                <Skeleton style={{ width: 72, height: 18, marginTop: 4 }} />
+              ) : (
+                <Text style={[styles.metricValueSmall, { color: '#007a55' }]} numberOfLines={1}>
+                  {aiPrediction.state === 'unavailable' ? 'Belum tersedia' : aiPrediction.riskClass}
+                </Text>
+              )}
               <View style={styles.metricStatusDot} />
             </View>
           </View>
