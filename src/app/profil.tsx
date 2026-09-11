@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Platform, SafeAreaView, ScrollView, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Alert, Platform, SafeAreaView, ScrollView, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Bell, ChevronRight, Cpu, HelpCircle, LogOut, Share2, UserPen } from 'lucide-react-native';
 
 import { BottomNav } from '@/components/bottom-nav';
@@ -51,7 +51,7 @@ export default function ProfilPage() {
             </View>
             <View>
               <Text style={styles.name}>{name}</Text>
-              <Text style={styles.role}>Pasien Rawat Jalan</Text>
+              <Text style={styles.role}>Pasien OstoSense</Text>
             </View>
           </View>
 
@@ -74,7 +74,16 @@ export default function ProfilPage() {
               </TouchableOpacity>
             ))}
 
-            <TouchableOpacity style={styles.menuRow} activeOpacity={0.7} onPress={signOut}>
+            <TouchableOpacity
+              style={styles.menuRow}
+              activeOpacity={0.7}
+              onPress={() =>
+                Alert.alert('Keluar dari akun?', 'Anda perlu login lagi untuk memantau data sensor.', [
+                  { text: 'Batal', style: 'cancel' },
+                  { text: 'Keluar', style: 'destructive', onPress: signOut },
+                ])
+              }
+            >
               <View style={[styles.menuIcon, { backgroundColor: COLOR.redBg }]}>
                 <LogOut color={COLOR.warningIcon} size={22} />
               </View>

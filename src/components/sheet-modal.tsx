@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Modal, Pressable, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { X } from 'lucide-react-native';
 
 import { COLOR } from '@/constants/app-colors';
@@ -17,8 +17,10 @@ export function SheetModal({
 }) {
   return (
     <Modal visible={visible} animationType="slide" transparent onRequestClose={onClose}>
-      <View style={styles.backdrop}>
-        <View style={styles.card}>
+      <Pressable style={styles.backdrop} onPress={onClose}>
+        {/* Tap di dalam kartu gak boleh nembus ke backdrop dan nutup modal — RN gak
+            bubble touch lewat View biasa, jadi butuh Pressable no-op di sini. */}
+        <Pressable style={styles.card} onPress={() => {}}>
           <View style={styles.header}>
             <Text style={styles.title}>{title}</Text>
             <TouchableOpacity style={styles.closeBtn} onPress={onClose} activeOpacity={0.7}>
@@ -26,8 +28,8 @@ export function SheetModal({
             </TouchableOpacity>
           </View>
           {children}
-        </View>
-      </View>
+        </Pressable>
+      </Pressable>
     </Modal>
   );
 }

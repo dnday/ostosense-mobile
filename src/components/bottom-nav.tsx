@@ -1,6 +1,6 @@
 import { Platform, Pressable, PressableStateCallbackType, StyleSheet, Text, View } from 'react-native';
 import { Href, useRouter } from 'expo-router';
-import { BookOpen, HeartPulse, Home, Map, User } from 'lucide-react-native';
+import { BookOpen, Gauge, Home, Map, User } from 'lucide-react-native';
 
 import { COLOR } from '@/constants/app-colors';
 
@@ -11,7 +11,7 @@ const FILLABLE: NavTab[] = ['beranda', 'profil'];
 
 const TABS: { key: NavTab; label: string; Icon: typeof Home; href: Href }[] = [
   { key: 'beranda', label: 'Beranda', Icon: Home, href: '/' },
-  { key: 'monitor', label: 'Monitor', Icon: HeartPulse, href: '/monitor' },
+  { key: 'monitor', label: 'Monitor', Icon: Gauge, href: '/monitor' },
   { key: 'lokasi', label: 'Lokasi', Icon: Map, href: '/lokasi' },
   { key: 'edukasi', label: 'Edukasi', Icon: BookOpen, href: '/edukasi' },
   { key: 'profil', label: 'Profil', Icon: User, href: '/profil' },

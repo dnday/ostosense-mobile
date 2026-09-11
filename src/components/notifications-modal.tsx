@@ -35,31 +35,44 @@ async function cancelReminder() {
 
 export function NotificationsModal({ visible, onClose }: { visible: boolean; onClose: () => void }) {
   const [prefs, setPrefs] = useState<Prefs>(DEFAULT_PREFS);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!visible) return;
+    setError(null);
     AsyncStorage.getItem(STORAGE_KEY).then((raw) => {
       if (raw) setPrefs(JSON.parse(raw));
     });
   }, [visible]);
 
   const toggle = async (key: keyof Prefs) => {
+    const prev = prefs;
     const next = { ...prefs, [key]: !prefs[key] };
     setPrefs(next);
-    await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+    setError(null);
 
-    if (key === 'gantiKantong') {
-      if (next.gantiKantong) await scheduleReminder();
-      else await cancelReminder();
-    }
+    try {
+      await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(next));
 
-    if (key === 'risikoTinggi') {
-      // Kontrol server-side: matiin/nyalain notifikasi push yang dikirim backend
-      // saat sensor deteksi kantong penuh / kontak cairan LIG langsung (bukan kelas AI).
-      await supabase
-        .from('push_tokens')
-        .update({ alerts_enabled: next.risikoTinggi })
-        .eq('session_id', DEVICE_SESSION_ID);
+      if (key === 'gantiKantong') {
+        if (next.gantiKantong) await scheduleReminder();
+        else await cancelReminder();
+      }
+
+      if (key === 'risikoTinggi') {
+        // Kontrol server-side: matiin/nyalain notifikasi push yang dikirim backend
+        // saat sensor deteksi kantong penuh / kontak cairan LIG langsung (bukan kelas AI).
+        const { error: supaError } = await supabase
+          .from('push_tokens')
+          .update({ alerts_enabled: next.risikoTinggi })
+          .eq('session_id', DEVICE_SESSION_ID);
+        if (supaError) throw supaError;
+      }
+    } catch {
+      // Gagal simpan (offline, RLS, dll) — balikin switch ke posisi semula, jangan
+      // biarkan UI bilang "aktif" padahal server/perangkat gak pernah nyimpen itu.
+      setPrefs(prev);
+      setError('Gagal menyimpan pengaturan. Coba lagi.');
     }
   };
 
@@ -88,6 +101,7 @@ export function NotificationsModal({ visible, onClose }: { visible: boolean; onC
             trackColor={{ true: COLOR.primary }}
           />
         </View>
+        {error && <Text style={styles.error}>{error}</Text>}
       </View>
     </SheetModal>
   );
@@ -107,4 +121,5 @@ const styles = StyleSheet.create({
   rowText: { flex: 1 },
   label: { fontFamily: 'Inter', fontSize: 13, fontWeight: '700', color: COLOR.text },
   desc: { fontFamily: 'Inter', fontSize: 11, color: COLOR.textLight, marginTop: 2 },
+  error: { fontFamily: 'Inter', fontSize: 12, color: COLOR.red, marginTop: 8 },
 });
