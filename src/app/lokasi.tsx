@@ -13,7 +13,6 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Cross, MapPin, Pill } from 'lucide-react-native';
 
 import { BottomNav } from '@/components/bottom-nav';
-import { BrandBar } from '@/components/brand-bar';
 import { FacilityMap } from '@/components/facility-map';
 import { COLOR } from '@/constants/app-colors';
 
@@ -54,11 +53,6 @@ export default function LokasiPage() {
     <SafeAreaView style={styles.safeArea}>
       <StatusBar barStyle="dark-content" backgroundColor={COLOR.white} />
       <View style={styles.container}>
-        {/* ─── Brand Bar ─── */}
-        <View style={styles.brandBarWrap}>
-          <BrandBar eyebrow="Lokasi" />
-        </View>
-
         {/* ─── Header ─── */}
         <View style={styles.header}>
           <Text style={styles.title}>Lokasi Terdekat</Text>
@@ -154,13 +148,9 @@ const styles = StyleSheet.create({
   },
 
   /* ── Header ── */
-  brandBarWrap: {
-    paddingHorizontal: 16,
-    paddingTop: Platform.OS === 'android' ? 48 : 16,
-    backgroundColor: COLOR.white,
-  },
   header: {
     paddingHorizontal: 16,
+    paddingTop: Platform.OS === 'android' ? 48 : 16,
     paddingBottom: 8,
     gap: 2,
     backgroundColor: COLOR.white,

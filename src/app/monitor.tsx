@@ -4,7 +4,6 @@ import { Droplets, History, Package } from 'lucide-react-native';
 
 import { AiStatusCard } from '@/components/ai-status-card';
 import { BottomNav } from '@/components/bottom-nav';
-import { BrandBar } from '@/components/brand-bar';
 import { LineChart } from '@/components/charts';
 import { Skeleton } from '@/components/skeleton';
 import { COLOR } from '@/constants/app-colors';
@@ -49,9 +48,6 @@ export default function MonitorPage() {
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
         >
-          {/* ─── Brand Bar ─── */}
-          <BrandBar eyebrow="Monitor" />
-
           {/* ─── Header ─── */}
           <View style={styles.headerRow}>
             <View style={styles.header}>

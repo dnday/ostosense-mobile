@@ -30,7 +30,6 @@ import {
 } from 'lucide-react-native';
 
 import { BottomNav } from '@/components/bottom-nav';
-import { BrandBar } from '@/components/brand-bar';
 import { NotificationsModal } from '@/components/notifications-modal';
 import { Skeleton } from '@/components/skeleton';
 import { COLOR } from '@/constants/app-colors';
@@ -77,9 +76,6 @@ export default function HomePage() {
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
         >
-          {/* ─── Brand Bar ─── */}
-          <BrandBar eyebrow="Beranda" />
-
           {/* ─── Header ─── */}
           <View style={styles.header}>
             <View>
