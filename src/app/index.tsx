@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import {
+  Animated,
   StyleSheet,
   Text,
   View,
@@ -9,6 +10,7 @@ import {
   Platform,
   StatusBar,
   ActivityIndicator,
+  Vibration,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -39,6 +41,15 @@ export default function HomePage() {
   const { series, refetch } = useSensorSeries();
   const aiPrediction = useAiPrediction();
   const [notifVisible, setNotifVisible] = useState(false);
+  const spinValue = useRef(new Animated.Value(0)).current;
+
+  const handleRefresh = () => {
+    Vibration.vibrate(30);
+    spinValue.setValue(0);
+    Animated.timing(spinValue, { toValue: 1, duration: 600, useNativeDriver: true }).start();
+    refetch();
+  };
+  const spin = spinValue.interpolate({ inputRange: [0, 1], outputRange: ['0deg', '360deg'] });
 
   // AI eksperimental cuma dipakai buat eskalasi visual di sini, bukan notifikasi
   // (lihat OSTOSENSE-AI/docs/ai-software-integration-contract-v0.2.md).
@@ -93,7 +104,7 @@ export default function HomePage() {
 
           {/* ─── Big Circular Status Button ─── */}
           <View style={styles.statusBtnContainer}>
-            <TouchableOpacity style={styles.statusBtnOuter} activeOpacity={0.8} onPress={refetch}>
+            <TouchableOpacity style={styles.statusBtnOuter} activeOpacity={0.8} onPress={handleRefresh}>
               {/* Green glow ring */}
               <View style={[styles.statusGlow, isWarning && { backgroundColor: COLOR.redBg }]} />
               {/* Gradient ring */}
@@ -130,8 +141,10 @@ export default function HomePage() {
               </View>
             </View>
             <View style={styles.sensorActions}>
-              <TouchableOpacity style={styles.sensorBtnDark} activeOpacity={0.8} onPress={refetch}>
-                <RefreshCw color="#fff" size={12} />
+              <TouchableOpacity style={styles.sensorBtnDark} activeOpacity={0.8} onPress={handleRefresh}>
+                <Animated.View style={{ transform: [{ rotate: spin }] }}>
+                  <RefreshCw color="#fff" size={12} />
+                </Animated.View>
                 <Text style={styles.sensorBtnDarkText}>Refresh Data</Text>
               </TouchableOpacity>
               <TouchableOpacity style={styles.sensorBtnLight} activeOpacity={0.7} onPress={() => router.push('/monitor')}>
@@ -288,10 +301,10 @@ const styles = StyleSheet.create({
     backgroundColor: COLOR.white,
     justifyContent: 'center',
     alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
+    shadowColor: '#1d2f4a',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.05,
+    shadowRadius: 12,
     elevation: 2,
   },
 
@@ -345,34 +358,34 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   statusBtnOuter: {
-    width: 128,
-    height: 128,
+    width: 176,
+    height: 176,
     justifyContent: 'center',
     alignItems: 'center',
   },
   statusGlow: {
     position: 'absolute',
-    width: 160,
-    height: 160,
-    borderRadius: 80,
+    width: 208,
+    height: 208,
+    borderRadius: 104,
     backgroundColor: COLOR.statusGlow,
-    opacity: 0.3,
+    opacity: 0.2,
   },
   statusGradientRing: {
     position: 'absolute',
-    width: 128,
-    height: 128,
-    borderRadius: 64,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 20 },
-    shadowOpacity: 0.1,
-    shadowRadius: 12.5,
+    width: 176,
+    height: 176,
+    borderRadius: 88,
+    shadowColor: '#1d2f4a',
+    shadowOffset: { width: 0, height: 12 },
+    shadowOpacity: 0.12,
+    shadowRadius: 24,
     elevation: 8,
   },
   statusInner: {
-    width: 112,
-    height: 112,
-    borderRadius: 56,
+    width: 156,
+    height: 156,
+    borderRadius: 78,
     backgroundColor: COLOR.white,
     justifyContent: 'center',
     alignItems: 'center',
@@ -401,10 +414,10 @@ const styles = StyleSheet.create({
     padding: 12,
     gap: 8,
     marginBottom: 16,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
+    shadowColor: '#1d2f4a',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.05,
+    shadowRadius: 12,
     elevation: 1,
   },
   sensorTop: {
@@ -413,9 +426,9 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   sensorIconWrap: {
-    width: 32,
-    height: 32,
-    borderRadius: 8,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
     backgroundColor: '#cbfbf1',
     justifyContent: 'center',
     alignItems: 'center',
@@ -463,9 +476,9 @@ const styles = StyleSheet.create({
   sensorBtnDark: {
     flex: 1,
     flexDirection: 'row',
-    height: 32,
+    height: 44,
     backgroundColor: COLOR.primary,
-    borderRadius: 8,
+    borderRadius: 12,
     justifyContent: 'center',
     alignItems: 'center',
     gap: 6,
@@ -480,9 +493,9 @@ const styles = StyleSheet.create({
   sensorBtnLight: {
     flex: 1,
     flexDirection: 'row',
-    height: 32,
+    height: 44,
     backgroundColor: '#f3f4f6',
-    borderRadius: 8,
+    borderRadius: 12,
     justifyContent: 'center',
     alignItems: 'center',
     gap: 6,
@@ -520,7 +533,7 @@ const styles = StyleSheet.create({
   metricIconWrap: {
     width: 42,
     height: 42,
-    borderRadius: 12,
+    borderRadius: 21,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 2,
@@ -536,17 +549,17 @@ const styles = StyleSheet.create({
   },
   metricValue: {
     fontFamily: 'Inter',
-    fontSize: 16,
+    fontSize: 26,
     fontWeight: '700',
     color: '#101828',
-    lineHeight: 22,
+    lineHeight: 30,
   },
   metricValueSmall: {
     fontFamily: 'Inter',
-    fontSize: 13,
+    fontSize: 16,
     fontWeight: '700',
     color: '#101828',
-    lineHeight: 18,
+    lineHeight: 20,
   },
   metricBarTrack: {
     width: '100%',
@@ -626,10 +639,10 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     paddingHorizontal: 12,
     gap: 12,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
+    shadowColor: '#1d2f4a',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.05,
+    shadowRadius: 12,
     elevation: 1,
   },
   infoIcon: {
