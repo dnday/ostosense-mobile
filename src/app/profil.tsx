@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Alert, Platform, SafeAreaView, ScrollView, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import Constants from 'expo-constants';
 import { Bell, ChevronRight, Cpu, HelpCircle, LogOut, Share2, UserPen } from 'lucide-react-native';
 
 import { BottomNav } from '@/components/bottom-nav';
@@ -10,6 +11,9 @@ import { NotificationsModal } from '@/components/notifications-modal';
 import { HelpModal } from '@/components/help-modal';
 import { COLOR } from '@/constants/app-colors';
 import { useAuth } from '@/auth';
+import { useSensorSeries } from '@/hooks/use-sensor-series';
+
+const APP_VERSION = Constants.expoConfig?.version ?? '1.0.0';
 
 type MenuKey = 'edit' | 'sensor' | 'notif' | 'share' | 'help';
 
@@ -30,7 +34,9 @@ function initialsOf(name: string) {
 export default function ProfilPage() {
   const [openModal, setOpenModal] = useState<MenuKey | null>(null);
   const { signOut, user } = useAuth();
+  const { series } = useSensorSeries();
   const name = user?.user_metadata?.full_name || user?.email || 'Pengguna';
+  const connected = series.source !== 'loading';
   return (
     <SafeAreaView style={styles.safeArea}>
       <StatusBar barStyle="dark-content" backgroundColor={COLOR.bg} />
@@ -41,6 +47,7 @@ export default function ProfilPage() {
           showsVerticalScrollIndicator={false}
         >
           <View style={styles.header}>
+            <Text style={styles.eyebrow}>Profil</Text>
             <Text style={styles.title}>Profil</Text>
             <Text style={styles.subtitle}>Kelola akun dan perangkat Anda</Text>
           </View>
@@ -52,6 +59,12 @@ export default function ProfilPage() {
             <View>
               <Text style={styles.name}>{name}</Text>
               <Text style={styles.role}>Pasien OstoSense</Text>
+              <View style={styles.connectedBadge}>
+                <View style={[styles.connectedDot, !connected && { backgroundColor: 'orange' }]} />
+                <Text style={[styles.connectedLabel, !connected && { color: 'orange' }]}>
+                  {connected ? 'Tersambung Real-time' : 'Menghubungkan...'}
+                </Text>
+              </View>
             </View>
           </View>
 
@@ -70,6 +83,11 @@ export default function ProfilPage() {
                   <Text style={styles.menuLabel}>{label}</Text>
                   <Text style={styles.menuDesc}>{desc}</Text>
                 </View>
+                {key === 'sensor' && connected && (
+                  <View style={styles.sensorActiveBadge}>
+                    <Text style={styles.sensorActiveText}>Aktif</Text>
+                  </View>
+                )}
                 <ChevronRight color={COLOR.chevron} size={16} />
               </TouchableOpacity>
             ))}
@@ -91,6 +109,11 @@ export default function ProfilPage() {
                 <Text style={[styles.menuLabel, { color: COLOR.warningIcon }]}>Keluar</Text>
               </View>
             </TouchableOpacity>
+          </View>
+
+          <View style={styles.versionFooter}>
+            <Text style={styles.versionText}>OstoSense Patient Companion</Text>
+            <Text style={styles.versionSub}>Versi {APP_VERSION}</Text>
           </View>
         </ScrollView>
 
@@ -125,6 +148,15 @@ const styles = StyleSheet.create({
   header: {
     marginBottom: 16,
     gap: 2,
+  },
+  eyebrow: {
+    fontFamily: 'Inter',
+    fontSize: 10,
+    fontWeight: '700',
+    color: COLOR.primary,
+    letterSpacing: 1,
+    textTransform: 'uppercase',
+    marginBottom: 2,
   },
   title: {
     fontFamily: 'Inter',
@@ -181,6 +213,60 @@ const styles = StyleSheet.create({
     fontWeight: '400',
     color: COLOR.textLight,
     lineHeight: 16,
+  },
+  connectedBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    marginTop: 6,
+  },
+  connectedDot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: COLOR.greenDot,
+  },
+  connectedLabel: {
+    fontFamily: 'Inter',
+    fontSize: 10,
+    fontWeight: '700',
+    color: '#00786f',
+    lineHeight: 14,
+    textTransform: 'uppercase',
+    letterSpacing: 0.3,
+  },
+  sensorActiveBadge: {
+    backgroundColor: COLOR.greenLight,
+    borderRadius: 999,
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    marginRight: 8,
+  },
+  sensorActiveText: {
+    fontFamily: 'Inter',
+    fontSize: 10,
+    fontWeight: '700',
+    color: COLOR.green,
+    lineHeight: 14,
+  },
+  versionFooter: {
+    marginTop: 24,
+    alignItems: 'center',
+    gap: 2,
+  },
+  versionText: {
+    fontFamily: 'Inter',
+    fontSize: 10,
+    fontWeight: '700',
+    color: COLOR.textLight,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+  },
+  versionSub: {
+    fontFamily: 'Inter',
+    fontSize: 11,
+    fontWeight: '400',
+    color: COLOR.textMuted,
   },
   menuList: {
     gap: 8,

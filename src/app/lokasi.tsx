@@ -55,6 +55,7 @@ export default function LokasiPage() {
       <View style={styles.container}>
         {/* ─── Header ─── */}
         <View style={styles.header}>
+          <Text style={styles.eyebrow}>Lokasi</Text>
           <Text style={styles.title}>Lokasi Terdekat</Text>
           <Text style={styles.subtitle}>Temukan fasilitas di sekitar Anda</Text>
         </View>
@@ -154,6 +155,15 @@ const styles = StyleSheet.create({
     paddingBottom: 8,
     gap: 2,
     backgroundColor: COLOR.white,
+  },
+  eyebrow: {
+    fontFamily: 'Inter',
+    fontSize: 10,
+    fontWeight: '700',
+    color: COLOR.primary,
+    letterSpacing: 1,
+    textTransform: 'uppercase',
+    marginBottom: 2,
   },
   title: {
     fontFamily: 'Inter',

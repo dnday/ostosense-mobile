@@ -49,9 +49,18 @@ export default function MonitorPage() {
           showsVerticalScrollIndicator={false}
         >
           {/* ─── Header ─── */}
-          <View style={styles.header}>
-            <Text style={styles.title}>Data Sensor</Text>
-            <Text style={styles.subtitle}>Pantau kondisi secara real-time</Text>
+          <View style={styles.headerRow}>
+            <View style={styles.header}>
+              <Text style={styles.eyebrow}>Monitor</Text>
+              <Text style={styles.title}>Data Sensor</Text>
+              <Text style={styles.subtitle}>Pantau kondisi secara real-time</Text>
+            </View>
+            <View style={styles.connectedBadge}>
+              <View style={[styles.connectedDot, source === 'loading' && { backgroundColor: 'orange' }]} />
+              <Text style={[styles.connectedLabel, source === 'loading' && { color: 'orange' }]}>
+                {source === 'loading' ? 'Menghubungkan...' : 'Tersambung'}
+              </Text>
+            </View>
           </View>
 
           {/* ─── Klasifikasi AI (eksperimental, lihat AiStatusCard) ─── */}
@@ -74,11 +83,12 @@ export default function MonitorPage() {
             ) : (
               <>
                 <LineChart labels={volume.labels} data={volume.data} color={COLOR.blue} />
-                <View style={[styles.statusBox, { backgroundColor: COLOR.blueLight, borderColor: COLOR.blueLight }]}>
+                <View style={[styles.statusBox, styles.statusBoxRow, { backgroundColor: COLOR.blueLight, borderColor: COLOR.blueLight }]}>
                   <Text style={styles.statusText}>
                     <Text style={[styles.statusLabel, { color: COLOR.blue }]}>Status:</Text> Volume{' '}
                     <Text style={styles.statusBold}>{volume.current}%</Text> - {volume.status}
                   </Text>
+                  <Text style={styles.statusMeta}>{100 - volume.current}% kosong</Text>
                 </View>
               </>
             )}
@@ -197,9 +207,51 @@ const styles = StyleSheet.create({
   },
 
   /* ── Header ── */
-  header: {
+  headerRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
     marginBottom: 16,
+  },
+  header: {
     gap: 2,
+  },
+  eyebrow: {
+    fontFamily: 'Inter',
+    fontSize: 10,
+    fontWeight: '700',
+    color: COLOR.primary,
+    letterSpacing: 1,
+    textTransform: 'uppercase',
+    marginBottom: 2,
+  },
+  connectedBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    backgroundColor: COLOR.white,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 999,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.08,
+    shadowRadius: 2,
+    elevation: 1,
+    marginTop: 2,
+  },
+  connectedDot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: COLOR.greenDot,
+  },
+  connectedLabel: {
+    fontFamily: 'Inter',
+    fontSize: 10,
+    fontWeight: '700',
+    color: '#00786f',
+    lineHeight: 14,
   },
   title: {
     fontFamily: 'Inter',
@@ -262,7 +314,20 @@ const styles = StyleSheet.create({
     paddingHorizontal: 11,
     paddingVertical: 10,
   },
+  statusBoxRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: 8,
+  },
+  statusMeta: {
+    fontFamily: 'Inter',
+    fontSize: 11,
+    fontWeight: '600',
+    color: COLOR.textLight,
+  },
   statusText: {
+    flexShrink: 1,
     fontFamily: 'Inter',
     fontSize: 12,
     fontWeight: '400',

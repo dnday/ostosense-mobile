@@ -68,6 +68,7 @@ export default function HomePage() {
           {/* ─── Header ─── */}
           <View style={styles.header}>
             <View>
+              <Text style={styles.eyebrow}>Beranda</Text>
               <Text style={styles.greeting}>Halo, Pasien 👋</Text>
               <Text style={styles.date}>Data Real-time OstoSense</Text>
             </View>
@@ -255,6 +256,15 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: 16,
+  },
+  eyebrow: {
+    fontFamily: 'Inter',
+    fontSize: 10,
+    fontWeight: '700',
+    color: COLOR.primary,
+    letterSpacing: 1,
+    textTransform: 'uppercase',
+    marginBottom: 2,
   },
   greeting: {
     fontFamily: 'Inter',
