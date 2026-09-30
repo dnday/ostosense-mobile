@@ -83,12 +83,10 @@ const styles = StyleSheet.create({
     height: Platform.OS === 'ios' ? 96 : 80,
     backgroundColor: COLOR.white,
     flexDirection: 'row',
-    borderTopWidth: 2,
-    borderTopColor: '#e5e7eb',
-    shadowColor: '#000',
+    shadowColor: '#1d2f4a',
     shadowOffset: { width: 0, height: -4 },
-    shadowOpacity: 0.08,
-    shadowRadius: 10,
+    shadowOpacity: 0.05,
+    shadowRadius: 16,
     elevation: 10,
   },
   navItem: {
@@ -106,24 +104,25 @@ const styles = StyleSheet.create({
     ...webTransition,
   },
   iconPillActive: {
-    backgroundColor: '#e2e8f2',
+    backgroundColor: 'transparent',
   },
   iconPillHover: {
-    backgroundColor: '#eef1f6',
+    backgroundColor: '#f2f4f7',
   },
   iconPillPressed: {
-    backgroundColor: '#d5dce9',
+    backgroundColor: '#eef1f6',
     transform: [{ scale: 0.92 }],
   },
   navLabel: {
     fontFamily: 'Inter',
     fontSize: 12,
-    fontWeight: '700',
+    fontWeight: '500',
     color: COLOR.textNav,
     lineHeight: 16,
     ...webTransition,
   },
   navLabelActive: {
     color: COLOR.primary,
+    fontWeight: '700',
   },
 });

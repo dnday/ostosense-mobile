@@ -4,6 +4,7 @@ import Constants from 'expo-constants';
 import { Bell, ChevronRight, Cpu, HelpCircle, LogOut, Share2, UserPen } from 'lucide-react-native';
 
 import { BottomNav } from '@/components/bottom-nav';
+import { BrandBar } from '@/components/brand-bar';
 import { ShareAppModal } from '@/components/share-app-modal';
 import { EditProfileModal } from '@/components/edit-profile-modal';
 import { SensorInfoModal } from '@/components/sensor-info-modal';
@@ -46,8 +47,9 @@ export default function ProfilPage() {
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
         >
+          <BrandBar eyebrow="Profil" />
+
           <View style={styles.header}>
-            <Text style={styles.eyebrow}>Profil</Text>
             <Text style={styles.title}>Profil</Text>
             <Text style={styles.subtitle}>Kelola akun dan perangkat Anda</Text>
           </View>
@@ -148,15 +150,6 @@ const styles = StyleSheet.create({
   header: {
     marginBottom: 16,
     gap: 2,
-  },
-  eyebrow: {
-    fontFamily: 'Inter',
-    fontSize: 10,
-    fontWeight: '700',
-    color: COLOR.primary,
-    letterSpacing: 1,
-    textTransform: 'uppercase',
-    marginBottom: 2,
   },
   title: {
     fontFamily: 'Inter',

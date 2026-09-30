@@ -11,6 +11,7 @@ import {
 } from 'lucide-react-native';
 
 import { BottomNav } from '@/components/bottom-nav';
+import { BrandBar } from '@/components/brand-bar';
 import { COLOR } from '@/constants/app-colors';
 
 const ARTICLES = [
@@ -30,9 +31,11 @@ export default function EdukasiPage() {
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
         >
+          {/* ─── Brand Bar ─── */}
+          <BrandBar eyebrow="Edukasi" />
+
           {/* ─── Header ─── */}
           <View style={styles.header}>
-            <Text style={styles.eyebrow}>Edukasi</Text>
             <Text style={styles.title}>Edukasi & Komunitas</Text>
             <Text style={styles.subtitle}>Pelajari lebih lanjut</Text>
           </View>
@@ -164,15 +167,6 @@ const styles = StyleSheet.create({
   header: {
     marginBottom: 16,
     gap: 2,
-  },
-  eyebrow: {
-    fontFamily: 'Inter',
-    fontSize: 10,
-    fontWeight: '700',
-    color: COLOR.primary,
-    letterSpacing: 1,
-    textTransform: 'uppercase',
-    marginBottom: 2,
   },
   title: {
     fontFamily: 'Inter',

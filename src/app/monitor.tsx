@@ -4,6 +4,7 @@ import { Droplets, History, Package } from 'lucide-react-native';
 
 import { AiStatusCard } from '@/components/ai-status-card';
 import { BottomNav } from '@/components/bottom-nav';
+import { BrandBar } from '@/components/brand-bar';
 import { LineChart } from '@/components/charts';
 import { Skeleton } from '@/components/skeleton';
 import { COLOR } from '@/constants/app-colors';
@@ -48,10 +49,12 @@ export default function MonitorPage() {
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
         >
+          {/* ─── Brand Bar ─── */}
+          <BrandBar eyebrow="Monitor" />
+
           {/* ─── Header ─── */}
           <View style={styles.headerRow}>
             <View style={styles.header}>
-              <Text style={styles.eyebrow}>Monitor</Text>
               <Text style={styles.title}>Data Sensor</Text>
               <Text style={styles.subtitle}>Pantau kondisi secara real-time</Text>
             </View>
@@ -215,15 +218,6 @@ const styles = StyleSheet.create({
   },
   header: {
     gap: 2,
-  },
-  eyebrow: {
-    fontFamily: 'Inter',
-    fontSize: 10,
-    fontWeight: '700',
-    color: COLOR.primary,
-    letterSpacing: 1,
-    textTransform: 'uppercase',
-    marginBottom: 2,
   },
   connectedBadge: {
     flexDirection: 'row',

@@ -1,7 +1,6 @@
 import { useRef, useState } from 'react';
 import {
   Animated,
-  Image,
   StyleSheet,
   Text,
   View,
@@ -28,10 +27,10 @@ import {
   Wifi,
   RefreshCw,
   History,
-  User,
 } from 'lucide-react-native';
 
 import { BottomNav } from '@/components/bottom-nav';
+import { BrandBar } from '@/components/brand-bar';
 import { NotificationsModal } from '@/components/notifications-modal';
 import { Skeleton } from '@/components/skeleton';
 import { COLOR } from '@/constants/app-colors';
@@ -79,18 +78,7 @@ export default function HomePage() {
           showsVerticalScrollIndicator={false}
         >
           {/* ─── Brand Bar ─── */}
-          <View style={styles.brandBar}>
-            <View style={styles.brandLeft}>
-              <Image source={require('@/assets/images/icon.png')} style={styles.brandLogo} />
-              <View>
-                <Text style={styles.brandTitle}>OstoSense</Text>
-                <Text style={styles.eyebrow}>Beranda</Text>
-              </View>
-            </View>
-            <TouchableOpacity style={styles.brandAvatar} activeOpacity={0.7} onPress={() => router.push('/profil')}>
-              <User color={COLOR.white} size={16} />
-            </TouchableOpacity>
-          </View>
+          <BrandBar eyebrow="Beranda" />
 
           {/* ─── Header ─── */}
           <View style={styles.header}>
@@ -278,54 +266,12 @@ const styles = StyleSheet.create({
     paddingBottom: 100,
   },
 
-  /* ── Brand Bar ── */
-  brandBar: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 16,
-  },
-  brandLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  brandLogo: {
-    width: 32,
-    height: 32,
-    borderRadius: 8,
-  },
-  brandTitle: {
-    fontFamily: 'Inter',
-    fontSize: 15,
-    fontWeight: '700',
-    color: COLOR.primary,
-    lineHeight: 19,
-  },
-  brandAvatar: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    backgroundColor: COLOR.primary,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-
   /* ── Header ── */
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: 16,
-  },
-  eyebrow: {
-    fontFamily: 'Inter',
-    fontSize: 10,
-    fontWeight: '700',
-    color: COLOR.primary,
-    letterSpacing: 1,
-    textTransform: 'uppercase',
-    marginBottom: 2,
   },
   greeting: {
     fontFamily: 'Inter',
