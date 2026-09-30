@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react';
 import {
   Animated,
+  Image,
   StyleSheet,
   Text,
   View,
@@ -27,6 +28,7 @@ import {
   Wifi,
   RefreshCw,
   History,
+  User,
 } from 'lucide-react-native';
 
 import { BottomNav } from '@/components/bottom-nav';
@@ -76,10 +78,23 @@ export default function HomePage() {
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
         >
+          {/* ─── Brand Bar ─── */}
+          <View style={styles.brandBar}>
+            <View style={styles.brandLeft}>
+              <Image source={require('@/assets/images/icon.png')} style={styles.brandLogo} />
+              <View>
+                <Text style={styles.brandTitle}>OstoSense</Text>
+                <Text style={styles.eyebrow}>Beranda</Text>
+              </View>
+            </View>
+            <TouchableOpacity style={styles.brandAvatar} activeOpacity={0.7} onPress={() => router.push('/profil')}>
+              <User color={COLOR.white} size={16} />
+            </TouchableOpacity>
+          </View>
+
           {/* ─── Header ─── */}
           <View style={styles.header}>
             <View>
-              <Text style={styles.eyebrow}>Beranda</Text>
               <Text style={styles.greeting}>Halo, Pasien 👋</Text>
               <Text style={styles.date}>Data Real-time OstoSense</Text>
             </View>
@@ -263,6 +278,39 @@ const styles = StyleSheet.create({
     paddingBottom: 100,
   },
 
+  /* ── Brand Bar ── */
+  brandBar: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  brandLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  brandLogo: {
+    width: 32,
+    height: 32,
+    borderRadius: 8,
+  },
+  brandTitle: {
+    fontFamily: 'Inter',
+    fontSize: 15,
+    fontWeight: '700',
+    color: COLOR.primary,
+    lineHeight: 19,
+  },
+  brandAvatar: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: COLOR.primary,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
   /* ── Header ── */
   header: {
     flexDirection: 'row',
@@ -314,8 +362,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: COLOR.redBg,
     borderRadius: 16,
-    borderWidth: 1,
-    borderColor: COLOR.redBorder,
     padding: 12,
     gap: 12,
     marginBottom: 16,
