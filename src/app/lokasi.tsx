@@ -10,20 +10,11 @@ import {
   View,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Cross, MapPin, Pill } from 'lucide-react-native';
+import { Cross, MapPin, Pill, Toilet } from 'lucide-react-native';
 
 import { BottomNav } from '@/components/bottom-nav';
 import { FacilityMap } from '@/components/facility-map';
 import { COLOR } from '@/constants/app-colors';
-
-// Custom toilet icon
-function Toilet(props: any) {
-  return (
-    <View style={{ width: props.size, height: props.size, justifyContent: 'center', alignItems: 'center' }}>
-      <View style={{ width: props.size * 0.6, height: props.size * 0.8, borderWidth: 1.5, borderColor: props.color, borderRadius: 4 }} />
-    </View>
-  );
-}
 
 const KIND = {
   toilet: { Icon: Toilet, gradient: ['#8b5cf6', '#615fff'] as const },
