@@ -30,6 +30,7 @@ import {
 } from 'lucide-react-native';
 
 import { BottomNav } from '@/components/bottom-nav';
+import { InstallAppModal } from '@/components/install-app-modal';
 import { NotificationsModal } from '@/components/notifications-modal';
 import { Skeleton } from '@/components/skeleton';
 import { COLOR } from '@/constants/app-colors';
@@ -239,6 +240,7 @@ export default function HomePage() {
 
         <BottomNav active="beranda" />
         <NotificationsModal visible={notifVisible} onClose={() => setNotifVisible(false)} />
+        <InstallAppModal />
       </View>
     </SafeAreaView>
   );
@@ -270,14 +272,14 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   greeting: {
-    fontFamily: 'Inter',
+    fontFamily: 'Poppins',
     fontSize: 20,
     fontWeight: '700',
     color: COLOR.text,
     lineHeight: 28,
   },
   date: {
-    fontFamily: 'Inter',
+    fontFamily: 'Poppins',
     fontSize: 12,
     fontWeight: '400',
     color: COLOR.textLight,
@@ -326,14 +328,14 @@ const styles = StyleSheet.create({
     gap: 2,
   },
   warningTitle: {
-    fontFamily: 'Inter',
+    fontFamily: 'Poppins',
     fontSize: 14,
     fontWeight: '700',
     color: COLOR.red,
     lineHeight: 20,
   },
   warningDesc: {
-    fontFamily: 'Inter',
+    fontFamily: 'Poppins',
     fontSize: 11,
     fontWeight: '400',
     color: COLOR.red,
@@ -380,7 +382,7 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   statusLabel: {
-    fontFamily: 'Inter',
+    fontFamily: 'Poppins',
     fontSize: 16,
     fontWeight: '700',
     color: COLOR.green,
@@ -388,7 +390,7 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   statusSub: {
-    fontFamily: 'Inter',
+    fontFamily: 'Poppins',
     fontSize: 10,
     fontWeight: '500',
     color: COLOR.textNav,
@@ -426,14 +428,14 @@ const styles = StyleSheet.create({
     gap: 0,
   },
   sensorTitle: {
-    fontFamily: 'Inter',
+    fontFamily: 'Poppins',
     fontSize: 12,
     fontWeight: '700',
     color: COLOR.text,
     lineHeight: 16,
   },
   sensorId: {
-    fontFamily: 'Inter',
+    fontFamily: 'Poppins',
     fontSize: 10,
     fontWeight: '400',
     color: COLOR.textLight,
@@ -451,7 +453,7 @@ const styles = StyleSheet.create({
     backgroundColor: COLOR.greenDot,
   },
   connectedLabel: {
-    fontFamily: 'Inter',
+    fontFamily: 'Poppins',
     fontSize: 10,
     fontWeight: '700',
     color: '#00786f',
@@ -472,7 +474,7 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   sensorBtnDarkText: {
-    fontFamily: 'Inter',
+    fontFamily: 'Poppins',
     fontSize: 12,
     fontWeight: '700',
     color: '#ffffff',
@@ -489,7 +491,7 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   sensorBtnLightText: {
-    fontFamily: 'Inter',
+    fontFamily: 'Poppins',
     fontSize: 12,
     fontWeight: '700',
     color: COLOR.text,
@@ -527,7 +529,7 @@ const styles = StyleSheet.create({
     marginBottom: 2,
   },
   metricLabel: {
-    fontFamily: 'Inter',
+    fontFamily: 'Poppins',
     fontSize: 10,
     fontWeight: '600',
     color: COLOR.textLight,
@@ -536,14 +538,14 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
   },
   metricValue: {
-    fontFamily: 'Inter',
+    fontFamily: 'Poppins',
     fontSize: 26,
     fontWeight: '700',
     color: '#101828',
     lineHeight: 30,
   },
   metricValueSmall: {
-    fontFamily: 'Inter',
+    fontFamily: 'Poppins',
     fontSize: 16,
     fontWeight: '700',
     color: '#101828',
@@ -600,14 +602,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   ctaTitle: {
-    fontFamily: 'Inter',
+    fontFamily: 'Poppins',
     fontSize: 16,
     fontWeight: '700',
     color: '#ffffff',
     lineHeight: 24,
   },
   ctaDesc: {
-    fontFamily: 'Inter',
+    fontFamily: 'Poppins',
     fontSize: 12,
     fontWeight: '400',
     color: 'rgba(255,255,255,0.9)',
@@ -646,14 +648,14 @@ const styles = StyleSheet.create({
     gap: 2,
   },
   infoTitle: {
-    fontFamily: 'Inter',
+    fontFamily: 'Poppins',
     fontSize: 14,
     fontWeight: '700',
     color: '#101828',
     lineHeight: 20,
   },
   infoDesc: {
-    fontFamily: 'Inter',
+    fontFamily: 'Poppins',
     fontSize: 12,
     fontWeight: '400',
     color: COLOR.textMuted,

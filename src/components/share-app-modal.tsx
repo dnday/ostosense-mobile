@@ -36,7 +36,7 @@ export function ShareAppModal({ visible, onClose }: { visible: boolean; onClose:
 const styles = StyleSheet.create({
   content: { alignItems: 'center', gap: 14 },
   qr: { width: 200, height: 200, borderRadius: 12 },
-  hint: { fontFamily: 'Inter', fontSize: 12, color: COLOR.textLight, textAlign: 'center' },
+  hint: { fontFamily: 'Poppins', fontSize: 12, color: COLOR.textLight, textAlign: 'center' },
   linkBox: {
     width: '100%',
     backgroundColor: COLOR.bg,
@@ -44,7 +44,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 10,
   },
-  link: { fontFamily: 'Inter', fontSize: 12, color: COLOR.textMuted, textAlign: 'center' },
+  link: { fontFamily: 'Poppins', fontSize: 12, color: COLOR.textMuted, textAlign: 'center' },
   actionBtn: {
     width: '100%',
     flexDirection: 'row',
@@ -55,5 +55,5 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  actionText: { fontFamily: 'Inter', fontSize: 13, fontWeight: '700', color: COLOR.white },
+  actionText: { fontFamily: 'Poppins', fontSize: 13, fontWeight: '700', color: COLOR.white },
 });

@@ -119,7 +119,7 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   rowText: { flex: 1 },
-  label: { fontFamily: 'Inter', fontSize: 13, fontWeight: '700', color: COLOR.text },
-  desc: { fontFamily: 'Inter', fontSize: 11, color: COLOR.textLight, marginTop: 2 },
-  error: { fontFamily: 'Inter', fontSize: 12, color: COLOR.red, marginTop: 8 },
+  label: { fontFamily: 'Poppins', fontSize: 13, fontWeight: '700', color: COLOR.text },
+  desc: { fontFamily: 'Poppins', fontSize: 11, color: COLOR.textLight, marginTop: 2 },
+  error: { fontFamily: 'Poppins', fontSize: 12, color: COLOR.red, marginTop: 8 },
 });

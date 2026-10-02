@@ -36,8 +36,8 @@ export function HelpModal({ visible, onClose }: { visible: boolean; onClose: () 
 const styles = StyleSheet.create({
   content: { gap: 14 },
   item: { gap: 4 },
-  question: { fontFamily: 'Inter', fontSize: 13, fontWeight: '700', color: COLOR.text },
-  answer: { fontFamily: 'Inter', fontSize: 12, color: COLOR.textLight, lineHeight: 18 },
+  question: { fontFamily: 'Poppins', fontSize: 13, fontWeight: '700', color: COLOR.text },
+  answer: { fontFamily: 'Poppins', fontSize: 12, color: COLOR.textLight, lineHeight: 18 },
   contactBtn: {
     flexDirection: 'row',
     gap: 8,
@@ -47,5 +47,5 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  contactText: { fontFamily: 'Inter', fontSize: 13, fontWeight: '700', color: COLOR.white },
+  contactText: { fontFamily: 'Poppins', fontSize: 13, fontWeight: '700', color: COLOR.white },
 });

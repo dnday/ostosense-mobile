@@ -54,7 +54,7 @@ export function SensorInfoModal({ visible, onClose }: { visible: boolean; onClos
 const styles = StyleSheet.create({
   content: { gap: 4 },
   sectionLabel: {
-    fontFamily: 'Inter',
+    fontFamily: 'Poppins',
     fontSize: 11,
     fontWeight: '700',
     color: COLOR.textLight,
@@ -70,8 +70,8 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: '#f1f5f9',
   },
-  label: { fontFamily: 'Inter', fontSize: 13, color: COLOR.textLight },
-  value: { fontFamily: 'Inter', fontSize: 13, fontWeight: '700', color: COLOR.text },
+  label: { fontFamily: 'Poppins', fontSize: 13, color: COLOR.textLight },
+  value: { fontFamily: 'Poppins', fontSize: 13, fontWeight: '700', color: COLOR.text },
   statusWrap: { flexDirection: 'row', alignItems: 'center', gap: 6 },
   dot: { width: 8, height: 8, borderRadius: 4 },
 });

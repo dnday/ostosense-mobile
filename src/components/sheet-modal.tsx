@@ -49,7 +49,7 @@ const styles = StyleSheet.create({
     maxHeight: '80%',
   },
   header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: '100%' },
-  title: { fontFamily: 'Inter', fontSize: 18, fontWeight: '700', color: COLOR.text },
+  title: { fontFamily: 'Poppins', fontSize: 18, fontWeight: '700', color: COLOR.text },
   closeBtn: {
     width: 32,
     height: 32,

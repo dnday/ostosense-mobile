@@ -44,18 +44,18 @@ export function EditProfileModal({ visible, onClose }: { visible: boolean; onClo
 
 const styles = StyleSheet.create({
   content: { gap: 14 },
-  label: { fontFamily: 'Inter', fontSize: 12, fontWeight: '600', color: COLOR.textLight, marginBottom: 6 },
+  label: { fontFamily: 'Poppins', fontSize: 12, fontWeight: '600', color: COLOR.textLight, marginBottom: 6 },
   input: {
     height: 46,
     borderRadius: 10,
     borderWidth: 1,
     borderColor: '#e2e8f0',
     paddingHorizontal: 12,
-    fontFamily: 'Inter',
+    fontFamily: 'Poppins',
     color: COLOR.text,
   },
-  readonly: { fontFamily: 'Inter', fontSize: 14, color: COLOR.textLight, paddingVertical: 4 },
-  error: { fontFamily: 'Inter', fontSize: 12, color: COLOR.warningIcon },
+  readonly: { fontFamily: 'Poppins', fontSize: 14, color: COLOR.textLight, paddingVertical: 4 },
+  error: { fontFamily: 'Poppins', fontSize: 12, color: COLOR.warningIcon },
   saveBtn: {
     height: 46,
     borderRadius: 10,
@@ -63,5 +63,5 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  saveText: { fontFamily: 'Inter', fontSize: 14, fontWeight: '700', color: COLOR.white },
+  saveText: { fontFamily: 'Poppins', fontSize: 14, fontWeight: '700', color: COLOR.white },
 });

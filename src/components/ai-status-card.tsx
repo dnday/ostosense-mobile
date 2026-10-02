@@ -94,9 +94,9 @@ const styles = StyleSheet.create({
   },
   header: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   iconWrap: { width: 36, height: 36, borderRadius: 8, justifyContent: 'center', alignItems: 'center' },
-  cardTitle: { fontFamily: 'Inter', fontSize: 14, fontWeight: '700', color: COLOR.text, lineHeight: 20 },
-  cardSubtitle: { fontFamily: 'Inter', fontSize: 12, fontWeight: '400', color: COLOR.textLight, lineHeight: 16 },
+  cardTitle: { fontFamily: 'Poppins', fontSize: 14, fontWeight: '700', color: COLOR.text, lineHeight: 20 },
+  cardSubtitle: { fontFamily: 'Poppins', fontSize: 12, fontWeight: '400', color: COLOR.textLight, lineHeight: 16 },
   statusBox: { borderWidth: 1, borderRadius: 8, paddingHorizontal: 11, paddingVertical: 10, gap: 4 },
-  statusTitle: { fontFamily: 'Inter', fontSize: 13, fontWeight: '700' },
-  statusDetail: { fontFamily: 'Inter', fontSize: 11, fontWeight: '400', color: '#364153', lineHeight: 15 },
+  statusTitle: { fontFamily: 'Poppins', fontSize: 13, fontWeight: '700' },
+  statusDetail: { fontFamily: 'Poppins', fontSize: 11, fontWeight: '400', color: '#364153', lineHeight: 15 },
 });

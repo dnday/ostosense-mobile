@@ -149,14 +149,14 @@ const styles = StyleSheet.create({
     gap: 2,
   },
   title: {
-    fontFamily: 'Inter',
+    fontFamily: 'Poppins',
     fontSize: 20,
     fontWeight: '700',
     color: COLOR.text,
     lineHeight: 28,
   },
   subtitle: {
-    fontFamily: 'Inter',
+    fontFamily: 'Poppins',
     fontSize: 12,
     fontWeight: '400',
     color: COLOR.textLight,
@@ -185,20 +185,20 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   avatarText: {
-    fontFamily: 'Inter',
+    fontFamily: 'Poppins',
     fontSize: 18,
     fontWeight: '700',
     color: COLOR.white,
   },
   name: {
-    fontFamily: 'Inter',
+    fontFamily: 'Poppins',
     fontSize: 16,
     fontWeight: '700',
     color: COLOR.text,
     lineHeight: 24,
   },
   role: {
-    fontFamily: 'Inter',
+    fontFamily: 'Poppins',
     fontSize: 12,
     fontWeight: '400',
     color: COLOR.textLight,
@@ -217,7 +217,7 @@ const styles = StyleSheet.create({
     backgroundColor: COLOR.greenDot,
   },
   connectedLabel: {
-    fontFamily: 'Inter',
+    fontFamily: 'Poppins',
     fontSize: 10,
     fontWeight: '700',
     color: '#00786f',
@@ -233,7 +233,7 @@ const styles = StyleSheet.create({
     marginRight: 8,
   },
   sensorActiveText: {
-    fontFamily: 'Inter',
+    fontFamily: 'Poppins',
     fontSize: 10,
     fontWeight: '700',
     color: COLOR.green,
@@ -245,7 +245,7 @@ const styles = StyleSheet.create({
     gap: 2,
   },
   versionText: {
-    fontFamily: 'Inter',
+    fontFamily: 'Poppins',
     fontSize: 10,
     fontWeight: '700',
     color: COLOR.textLight,
@@ -253,7 +253,7 @@ const styles = StyleSheet.create({
     letterSpacing: 0.5,
   },
   versionSub: {
-    fontFamily: 'Inter',
+    fontFamily: 'Poppins',
     fontSize: 11,
     fontWeight: '400',
     color: COLOR.textMuted,
@@ -286,14 +286,14 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   menuLabel: {
-    fontFamily: 'Inter',
+    fontFamily: 'Poppins',
     fontSize: 14,
     fontWeight: '700',
     color: COLOR.text,
     lineHeight: 20,
   },
   menuDesc: {
-    fontFamily: 'Inter',
+    fontFamily: 'Poppins',
     fontSize: 11,
     fontWeight: '400',
     color: COLOR.textLight,

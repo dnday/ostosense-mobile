@@ -114,7 +114,7 @@ const styles = StyleSheet.create({
     transform: [{ scale: 0.92 }],
   },
   navLabel: {
-    fontFamily: 'Inter',
+    fontFamily: 'Poppins',
     fontSize: 12,
     fontWeight: '500',
     color: COLOR.textNav,
