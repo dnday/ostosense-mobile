@@ -6,8 +6,8 @@ import { SheetModal } from '@/components/sheet-modal';
 
 const FAQ = [
   { q: 'Kenapa data sensor gak update?', a: 'Pastikan perangkat ESP32 menyala dan terhubung ke WiFi. Tarik layar Monitor ke bawah untuk refresh manual.' },
-  { q: 'Berapa lama baterai sensor tahan?', a: 'Sekitar 5-7 hari pemakaian normal, tergantung frekuensi transmisi data.' },
-  { q: 'Apa yang harus dilakukan saat status “Risiko Tinggi”?', a: 'Segera periksa kondisi kantong dan pertimbangkan penggantian dalam 30 menit ke depan.' },
+  { q: 'Berapa lama baterai sensor tahan?', a: 'Perkiraan sekitar 13 jam sekali isi (baterai 1.500 mAh, belum diukur langsung). Isi ulang setiap hari.' },
+  { q: 'Apa yang harus dilakukan saat status Caution atau Urgent?', a: 'Segera periksa kantong dan perekat, lalu kosongkan atau ganti bila perlu. Hubungi perawat bila ada rembesan atau kulit di sekitar stoma iritasi.' },
 ];
 
 export function HelpModal({ visible, onClose }: { visible: boolean; onClose: () => void }) {
