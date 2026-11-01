@@ -100,8 +100,8 @@ export default function MonitorPage() {
               Icon={Droplets}
               iconBg={COLOR.tealLight}
               iconColor={COLOR.teal}
-              title="Diagnostik Sensor LIG (perekat)"
-              subtitle="Angka mentah: resistif = perkiraan hambatan (makin kecil = makin basah), kapasitif = hitungan sensor (bukan pF). Belum ada interpretasi klinis"
+              title="Sensor Perekat"
+              subtitle="Hambatan makin kecil = makin basah. Masih tahap uji."
             />
             {loading ? (
               <View style={styles.diagRow}>
@@ -112,21 +112,21 @@ export default function MonitorPage() {
               <>
                 <View style={styles.diagRow}>
                   <View style={styles.diagCell}>
-                    <Text style={styles.diagLabel}>Resistif dalam (Res_15)</Text>
+                    <Text style={styles.diagLabel}>Rembesan dalam</Text>
                     <Text style={styles.diagValue}>{formatOhm(ligOhm(diagnostics.res15))}</Text>
                   </View>
                   <View style={styles.diagCell}>
-                    <Text style={styles.diagLabel}>Resistif luar (Res_16)</Text>
+                    <Text style={styles.diagLabel}>Rembesan luar</Text>
                     <Text style={styles.diagValue}>{formatOhm(ligOhm(diagnostics.res16))}</Text>
                   </View>
                 </View>
                 <View style={styles.diagRow}>
                   <View style={styles.diagCell}>
-                    <Text style={styles.diagLabel}>Kapasitif dalam (Kap_4)</Text>
+                    <Text style={styles.diagLabel}>Kelembapan dalam</Text>
                     <Text style={styles.diagValue}>{diagnostics.kap4 ?? '—'}</Text>
                   </View>
                   <View style={styles.diagCell}>
-                    <Text style={styles.diagLabel}>Kapasitif luar (Kap_5)</Text>
+                    <Text style={styles.diagLabel}>Kelembapan luar</Text>
                     <Text style={styles.diagValue}>{diagnostics.kap5 ?? '—'}</Text>
                   </View>
                 </View>

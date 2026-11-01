@@ -30,21 +30,21 @@ export function SensorInfoModal({ visible, onClose }: { visible: boolean; onClos
           <Text style={styles.value}>{series.volume.current}%</Text>
         </View>
 
-        <Text style={styles.sectionLabel}>Diagnostik Sensor LIG di perekat (mentah)</Text>
+        <Text style={styles.sectionLabel}>Sensor Perekat</Text>
         <View style={styles.row}>
-          <Text style={styles.label}>LIG resistif dalam (Res_15, perkiraan)</Text>
+          <Text style={styles.label}>Rembesan dalam</Text>
           <Text style={styles.value}>{formatOhm(ligOhm(series.diagnostics.res15))}</Text>
         </View>
         <View style={styles.row}>
-          <Text style={styles.label}>LIG resistif luar (Res_16, perkiraan)</Text>
+          <Text style={styles.label}>Rembesan luar</Text>
           <Text style={styles.value}>{formatOhm(ligOhm(series.diagnostics.res16))}</Text>
         </View>
         <View style={styles.row}>
-          <Text style={styles.label}>LIG kapasitif dalam (Kap_4)</Text>
+          <Text style={styles.label}>Kelembapan dalam</Text>
           <Text style={styles.value}>{series.diagnostics.kap4 ?? '—'}</Text>
         </View>
         <View style={styles.row}>
-          <Text style={styles.label}>LIG kapasitif luar (Kap_5)</Text>
+          <Text style={styles.label}>Kelembapan luar</Text>
           <Text style={styles.value}>{series.diagnostics.kap5 ?? '—'}</Text>
         </View>
       </View>
