@@ -1,5 +1,6 @@
 import { StyleSheet, Text, View } from 'react-native';
 
+import { ligOhm, formatOhm } from '@/lib/lig';
 import { COLOR } from '@/constants/app-colors';
 import { SheetModal } from '@/components/sheet-modal';
 import { useSensorSeries } from '@/hooks/use-sensor-series';
@@ -31,12 +32,12 @@ export function SensorInfoModal({ visible, onClose }: { visible: boolean; onClos
 
         <Text style={styles.sectionLabel}>Diagnostik Sensor LIG di perekat (mentah)</Text>
         <View style={styles.row}>
-          <Text style={styles.label}>LIG resistif dalam (Res_15, ADC)</Text>
-          <Text style={styles.value}>{series.diagnostics.res15 ?? '—'}</Text>
+          <Text style={styles.label}>LIG resistif dalam (Res_15, perkiraan)</Text>
+          <Text style={styles.value}>{formatOhm(ligOhm(series.diagnostics.res15))}</Text>
         </View>
         <View style={styles.row}>
-          <Text style={styles.label}>LIG resistif luar (Res_16, ADC)</Text>
-          <Text style={styles.value}>{series.diagnostics.res16 ?? '—'}</Text>
+          <Text style={styles.label}>LIG resistif luar (Res_16, perkiraan)</Text>
+          <Text style={styles.value}>{formatOhm(ligOhm(series.diagnostics.res16))}</Text>
         </View>
         <View style={styles.row}>
           <Text style={styles.label}>LIG kapasitif dalam (Kap_4)</Text>

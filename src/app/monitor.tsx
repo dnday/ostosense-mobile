@@ -1,4 +1,5 @@
 import { useSensorSeries } from "@/hooks/use-sensor-series";
+import { ligOhm, formatOhm } from '@/lib/lig';
 import { Platform, SafeAreaView, ScrollView, StatusBar, StyleSheet, Text, View } from 'react-native';
 import { Droplets, History, Package } from 'lucide-react-native';
 
@@ -100,7 +101,7 @@ export default function MonitorPage() {
               iconBg={COLOR.tealLight}
               iconColor={COLOR.teal}
               title="Diagnostik Sensor LIG (perekat)"
-              subtitle="Angka mentah: resistif = ADC 0–4095 (bukan Ω), kapasitif = hitungan sensor (bukan pF). Belum ada interpretasi klinis"
+              subtitle="Angka mentah: resistif = perkiraan hambatan (makin kecil = makin basah), kapasitif = hitungan sensor (bukan pF). Belum ada interpretasi klinis"
             />
             {loading ? (
               <View style={styles.diagRow}>
@@ -112,11 +113,11 @@ export default function MonitorPage() {
                 <View style={styles.diagRow}>
                   <View style={styles.diagCell}>
                     <Text style={styles.diagLabel}>Resistif dalam (Res_15)</Text>
-                    <Text style={styles.diagValue}>{diagnostics.res15 ?? '—'}</Text>
+                    <Text style={styles.diagValue}>{formatOhm(ligOhm(diagnostics.res15))}</Text>
                   </View>
                   <View style={styles.diagCell}>
                     <Text style={styles.diagLabel}>Resistif luar (Res_16)</Text>
-                    <Text style={styles.diagValue}>{diagnostics.res16 ?? '—'}</Text>
+                    <Text style={styles.diagValue}>{formatOhm(ligOhm(diagnostics.res16))}</Text>
                   </View>
                 </View>
                 <View style={styles.diagRow}>
